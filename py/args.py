@@ -40,18 +40,32 @@ def parseTranscribeArgs():
 def parseSrtEditorArgs():
     parser = argparse.ArgumentParser()
 
-    _addVideoPathArgs(parser)
+    # global options
     _addSrtPathArgs(parser)
-
     parser.add_argument('-i', '--srt-id', type=int, 
                     required=True, 
                     # default=1
                     )
-    parser.add_argument('-s', '--start-offset', type=float, default=0.0)
-    parser.add_argument('-e', '--end-offset',   type=float, default=0.0)
-    # TODO mutually exclusive. possibley use action groups instead, i.e preview, save, remove
-    parser.add_argument("--save",               action='store_true', help="Save edit")
-    parser.add_argument("--remove",             action='store_true', help="Remove edit")
+
+    # Create a parent parser for shared arguments
+    edit_preview_parent_parser = argparse.ArgumentParser(add_help=False)
+
+    # Add shared arguments to the parent parser
+    edit_preview_parent_parser.add_argument('-s', '--start-offset', type=float, default=0.0)
+    edit_preview_parent_parser.add_argument('-e', '--end-offset',   type=float, default=0.0)
+
+    # command parser
+    subparsers = parser.add_subparsers(dest='command')
+
+    # preview subcommand and arguments
+    preview_subparser = subparsers.add_parser('preview', parents=[edit_preview_parent_parser], description="Preview edit")
+    _addVideoPathArgs(preview_subparser)
+
+    # edit subcommand and arguments
+    subparsers.add_parser('edit', parents=[edit_preview_parent_parser], description="Save edit")
+
+    # remove just uses only global options
+    subparsers.add_parser('remove', description="Remove edit")
 
     return parser.parse_args()
 
