@@ -35,11 +35,10 @@ def calculate_duration(start, end):
     return str(duration)
 
 def get_hardware(gpu):
-    # TODO case insensitive
-    if gpu == 'apple':
+    if str.lower(gpu) == 'apple':
         encoder = 'h264_videotoolbox'
         hwaccel = 'videotoolbox'
-    elif gpu == 'nvidia':
+    elif str.lower(gpu) == 'nvidia':
         encoder = 'h264_nvenc'
         hwaccel = 'cuvid'
     else:
@@ -54,7 +53,7 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
     commands = []
     output_files = []
     srt_ids = []
-    for srt_id, start, end in time_ranges: # TODO progress
+    for srt_id, start, end in time_ranges:
         formatted_start = format_time(start)
         formatted_end = format_time(end)
         seek_time = get_seek_time(start, -2)
@@ -86,7 +85,7 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
     return commands, output_files, srt_ids
 
 def run_ffmpeg_commands(commands, srt_ids):
-    with open('ffmpeg.log', 'w') as log:
+    with open('ffmpeg.log', 'w') as log: # TODO: split video should incorporate the source and any overrides
         for i in range(len(commands)):
             print(f"Splitting clip {i+1} of {len(srt_ids)}... ", end='', flush=True)
             start_time = time.time()

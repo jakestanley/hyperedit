@@ -65,8 +65,13 @@ srt_file_path = args.srt_file_path
 srt_id = args.srt_id
 
 srts = parse_srt(srt_file_path)
-# TODO: handle array bounds exception
-srt = srts[srt_id - 1]
+if len(srts) == 0:
+    raise Exception("SRT file is empty")
+
+try:
+    srt = srts[srt_id - 1]
+except IndexError:
+    raise Exception(f"SRT ID {srt_id} is not in the provded SRT file")
 
 if args.command != "remove":
     start_offset = args.start_offset
@@ -78,13 +83,10 @@ if args.command != "remove":
     duration = end - start
 
 if args.command == "edit" or args.command == "remove":
-    # TODO: split video should incorporate the source and any overrides
-    # print("Saving edits")
     directory = os.path.dirname(args.srt_file_path)
     basename, _ = os.path.splitext(args.srt_file_path)
     srt_overrides_path = f"{basename}-overrides.srt"
 
-    # TODO: handle if an SRT does not exist in the original file
     srt_entries = read_srt(srt_overrides_path)
     if args.command == "edit":
         replace_or_add_srt_entry(srt_entries, srt_id, seconds_to_srt_timestamp(start), seconds_to_srt_timestamp(end), 'text unused')

@@ -18,7 +18,7 @@ You've recorded some footage with multiple audio tracks but there's a lot of sil
 
 ## Roadmap
 
-- Improve performance
-- Enhance SRT editor
-- More hardware acceleration support
-- Improve performance. Seriously, it's slow as
+- Improve performance some more
+- Software encoding support
+- SRT overrides actually used
+- Higher quality rendering options
