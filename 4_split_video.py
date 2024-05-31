@@ -131,6 +131,7 @@ directory = os.path.dirname(args.video_file_path)
 output_prefix, _ = os.path.splitext(args.video_file_path)
 list_filename = 'file_list.txt'
 final_output = f"{output_prefix}_final.mp4"
+# TODO: SRT ID skip list
 
 # Parse SRT and generate FFmpeg commands
 # limited to 10 for testing purposes
