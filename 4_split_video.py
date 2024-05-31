@@ -17,7 +17,7 @@ def adjust_time(time_str, delta_seconds):
     adjusted_time = time_obj + datetime.timedelta(seconds=delta_seconds)
     return adjusted_time.strftime('%H:%M:%S')
 
-def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, overlay=False):
+def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, encoder, overlay=False):
     commands = []
     output_files = []
     srt_ids = []
@@ -29,7 +29,7 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, overlay=Fal
         ## OVERWRITE
         if not os.path.exists(output_file):
             cmd = [
-                'ffmpeg', '-i', video_file, '-ss', start, '-to', end, '-c:v', 'h264_videotoolbox', '-b:v', '5M'
+                'ffmpeg', '-i', video_file, '-ss', start, '-to', end, '-c:v', encoder, '-b:v', '5M'
             ]
             if overlay:
                 human_readable_text = escape_text(f"ID: {srt_id}, Start: {start}, End: {end}")
@@ -54,9 +54,9 @@ def create_file_list(output_files, list_filename):
         for output_file in output_files:
             file.write(f"file '{output_file}'\n")
 
-def concatenate_clips(file_list, output_file):
+def concatenate_clips(file_list, output_file, encoder):
     cmd = [
-        'ffmpeg', '-y', '-f', 'concat', '-safe', '0', '-i', file_list, '-c:v', 'h264_videotoolbox', '-b:v', '5M', output_file
+        'ffmpeg', '-y', '-f', 'concat', '-safe', '0', '-i', file_list, '-c:v', encoder, '-b:v', '5M', output_file
     ]
     subprocess.run(cmd)
 
@@ -69,12 +69,11 @@ directory = os.path.dirname(args.video_file_path)
 output_prefix, _ = os.path.splitext(args.video_file_path)
 list_filename = 'file_list.txt'
 final_output = f"{output_prefix}_final.mp4"
-overlay = args.overlay
 
 # Parse SRT and generate FFmpeg commands
 # limited to 10 for testing purposes
 time_ranges = parse_srt(srt_file_path)
-ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, overlay)
+ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.encoder, args.overlay)
 
 # Run the FFmpeg commands to split the video
 run_ffmpeg_commands(ffmpeg_commands, srt_ids)
@@ -83,7 +82,7 @@ run_ffmpeg_commands(ffmpeg_commands, srt_ids)
 create_file_list(output_files, list_filename)
 
 # Concatenate the split clips into a single video
-concatenate_clips(list_filename, final_output)
+concatenate_clips(list_filename, final_output, args.encoder)
 
 # Clean up the intermediate files (optional)
 # for output_file in output_files:
