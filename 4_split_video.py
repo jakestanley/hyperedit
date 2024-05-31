@@ -13,15 +13,16 @@ def escape_text(text):
 
 def get_seek_time(time_str, delta_seconds):
     """Get formatted seek time"""
-    time_obj = datetime.datetime.strptime(time_str.split('.')[0], '%H:%M:%S')
-    # TODO: bug exists when clip starts less than 2 seconds into the video
+    time_obj = datetime.datetime.strptime(time_str, '%H:%M:%S.%f')
     adjusted_time = time_obj + datetime.timedelta(seconds=delta_seconds)
-    return adjusted_time.strftime('%H:%M:%S')
+    if adjusted_time < datetime.datetime(1900, 1, 1):
+        return '00:00:00.000'
+    return adjusted_time.strftime('%H:%M:%S.%f')
 
 def calculate_seek_offset(start, seek_time):
     """Calculate the offset between actual start time and the initial fast seek."""
     start_time = datetime.datetime.strptime(start, '%H:%M:%S.%f')
-    adjusted_start_time = datetime.datetime.strptime(seek_time, '%H:%M:%S')
+    adjusted_start_time = datetime.datetime.strptime(seek_time, '%H:%M:%S.%f')
     delta = start_time - adjusted_start_time
     return str(delta)
 
@@ -50,16 +51,18 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
         formatted_end = format_time(end)
         seek_time = get_seek_time(start, -2)
         seek_offset = calculate_seek_offset(start, seek_time)
+        end_seek_offset = calculate_seek_offset(end, start)
         output_file = f"{output_prefix}_{srt_id}_{formatted_start}_to_{formatted_end}.mp4"
+        print(f"Start time {start} using Seek time {seek_time} with offset {seek_offset} - {end_seek_offset}")
         
         ## OVERWRITE
         if not os.path.exists(output_file):
             cmd = [
-                'ffmpeg', 
+                'ffmpeg',
                 '-ss', seek_time,
                 '-i', video_file, 
                 '-ss', seek_offset,
-                '-to', end, 
+                '-to', end_seek_offset, 
                 '-c:v', encoder, 
                 '-b:v', '5M'
             ]
