@@ -71,8 +71,11 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
                 '-ss', seek_offset,
                 '-t', duration, 
                 '-c:v', encoder, 
-                '-b:v', '5M'
+                '-b:v', '5M',
+                # Map all video and audio streams
+                '-map', '0:v', '-map', '0:a'
             ]
+
             if overlay:
                 human_readable_text = escape_text(f"ID: {srt_id}, Start: {start}, End: {end}")
                 drawtext = f"drawtext=text='{human_readable_text}':fontsize=72:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:x=10:y=10"
