@@ -12,8 +12,9 @@ def escape_text(text):
     return text.replace(":", r'\:').replace(",", r'\,').replace("'", r"\'")
 
 def get_seek_time(time_str, delta_seconds):
-    """Adjust the given time string by delta_seconds and return the new time string."""
+    """Get formatted seek time"""
     time_obj = datetime.datetime.strptime(time_str.split('.')[0], '%H:%M:%S')
+    # TODO: bug exists when clip starts less than 2 seconds into the video
     adjusted_time = time_obj + datetime.timedelta(seconds=delta_seconds)
     return adjusted_time.strftime('%H:%M:%S')
 
@@ -24,13 +25,31 @@ def calculate_seek_offset(start, seek_time):
     delta = start_time - adjusted_start_time
     return str(delta)
 
-def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, encoder, overlay=False):
+def get_hardware(gpu):
+    # TODO case insensitive
+    if gpu == 'apple':
+        encoder = 'h264_videotoolbox'
+        hwaccel = 'videotoolbox'
+    elif gpu == 'nvidia':
+        encoder = 'h264_nvenc'
+        hwaccel = 'cuvid'
+    else:
+        raise Exception(f"Invalid GPU: {gpu}")
+
+    return encoder, hwaccel
+
+def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overlay=False):
+
+    encoder, hwaccel = get_hardware(gpu)
+
     commands = []
     output_files = []
     srt_ids = []
     for srt_id, start, end in time_ranges: # TODO progress
         formatted_start = format_time(start)
         formatted_end = format_time(end)
+        seek_time = get_seek_time(start, -2)
+        seek_offset = calculate_seek_offset(start, seek_time)
         output_file = f"{output_prefix}_{srt_id}_{formatted_start}_to_{formatted_end}.mp4"
         
         ## OVERWRITE
@@ -65,7 +84,10 @@ def create_file_list(output_files, list_filename):
         for output_file in output_files:
             file.write(f"file '{output_file}'\n")
 
-def concatenate_clips(file_list, output_file, encoder):
+def concatenate_clips(file_list, output_file, gpu):
+
+    encoder, hwaccel = get_hardware(gpu)
+
     cmd = [
         'ffmpeg', 
         '-y', 
@@ -91,7 +113,7 @@ final_output = f"{output_prefix}_final.mp4"
 # Parse SRT and generate FFmpeg commands
 # limited to 10 for testing purposes
 time_ranges = parse_srt(srt_file_path)
-ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.encoder, args.overlay)
+ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.overlay)
 
 # Run the FFmpeg commands to split the video
 run_ffmpeg_commands(ffmpeg_commands, srt_ids)
@@ -100,7 +122,7 @@ run_ffmpeg_commands(ffmpeg_commands, srt_ids)
 create_file_list(output_files, list_filename)
 
 # Concatenate the split clips into a single video
-concatenate_clips(list_filename, final_output, args.encoder)
+concatenate_clips(list_filename, final_output, args.gpu)
 
 # Clean up the intermediate files (optional)
 # for output_file in output_files:

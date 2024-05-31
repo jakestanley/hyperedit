@@ -60,7 +60,7 @@ def parseSplitVideoArgs():
 
     _addVideoPathArgs(parser)
     _addSrtPathArgs(parser)
-    parser.add_argument("-E", "--encoder", type=str, required=True, help="e.g videotoolbox or nvenc")
+    parser.add_argument("-g", "--gpu", type=str, required=True, help="e.g apple or nvidia")
     parser.add_argument("--overlay", action='store_true', help="Overlay SRT and timestamps onto clips")
 
     return parser.parse_args()
