@@ -13,6 +13,7 @@ def escape_text(text):
 def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, overlay=False):
     commands = []
     output_files = []
+    srt_ids = []
     for srt_id, start, end in time_ranges: # TODO progress
         formatted_start = format_time(start)
         formatted_end = format_time(end)
@@ -29,12 +30,17 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, overlay=Fal
                 cmd.extend(['-vf', drawtext])
             cmd.append(output_file)
             commands.append(cmd)
+            srt_ids.append(srt_id)
         output_files.append(output_file)
-    return commands, output_files
+    return commands, output_files, srt_ids
 
-def run_ffmpeg_commands(commands):
-    for cmd in commands:
-        subprocess.run(cmd)
+def run_ffmpeg_commands(commands, srt_ids):
+    i = 0
+    with open('ffmpeg.log', 'w') as log:
+        for cmd in commands:
+            i+=1
+            print(f"Splitting clip on SRT {srt_ids[i]} of {len(srt_ids)}")
+            subprocess.run(cmd, stdout=log, stderr=log)
 
 def create_file_list(output_files, list_filename):
     with open(list_filename, 'w') as file:
@@ -61,10 +67,10 @@ overlay = args.overlay
 # Parse SRT and generate FFmpeg commands
 # limited to 10 for testing purposes
 time_ranges = parse_srt(srt_file_path)
-ffmpeg_commands, output_files = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, overlay)
+ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, overlay)
 
 # Run the FFmpeg commands to split the video
-run_ffmpeg_commands(ffmpeg_commands)
+run_ffmpeg_commands(ffmpeg_commands, srt_ids)
 
 # Create the file list for concatenation
 create_file_list(output_files, list_filename)
