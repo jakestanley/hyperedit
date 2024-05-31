@@ -1,6 +1,7 @@
 import subprocess
 import os
 import datetime
+import time
 
 from py.args import parseSplitVideoArgs
 from py.srt import parse_srt
@@ -78,7 +79,7 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
                 drawtext = f"drawtext=text='{human_readable_text}':fontsize=72:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:x=10:y=10"
                 cmd.extend(['-vf', drawtext])
             cmd.append(output_file)
-            print(f"Generating command: {cmd}")
+
             commands.append(cmd)
             srt_ids.append(srt_id)
         output_files.append(output_file)
@@ -87,10 +88,13 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
 def run_ffmpeg_commands(commands, srt_ids):
     with open('ffmpeg.log', 'w') as log:
         for i in range(len(commands)):
-            print(f"Splitting clip {i+1} of {len(srt_ids)}")
+            print(f"Splitting clip {i+1} of {len(srt_ids)}... ", end='', flush=True)
+            start_time = time.time()
             e = subprocess.run(commands[i], stdout=log, stderr=log)
             if e.returncode != 0:
                 raise(f"Error splitting clip {i+1} of {len(srt_ids)}: ffmpeg returned exit code {e.returncode}")
+            end_time = time.time()
+            print(f" {end_time - start_time:.1f} seconds")
 
 def create_file_list(output_files, list_filename):
     with open(list_filename, 'w') as file:
