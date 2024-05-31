@@ -29,7 +29,12 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, encoder, ov
         ## OVERWRITE
         if not os.path.exists(output_file):
             cmd = [
-                'ffmpeg', '-i', video_file, '-ss', start, '-to', end, '-c:v', encoder, '-b:v', '5M'
+                'ffmpeg', 
+                '-i', video_file, 
+                '-ss', start, 
+                '-to', end, 
+                '-c:v', encoder, 
+                '-b:v', '5M'
             ]
             if overlay:
                 human_readable_text = escape_text(f"ID: {srt_id}, Start: {start}, End: {end}")
@@ -54,7 +59,14 @@ def create_file_list(output_files, list_filename):
 
 def concatenate_clips(file_list, output_file, encoder):
     cmd = [
-        'ffmpeg', '-y', '-f', 'concat', '-safe', '0', '-i', file_list, '-c:v', encoder, '-b:v', '5M', output_file
+        'ffmpeg', 
+        '-y', 
+        '-f', 'concat', 
+        '-safe', '0', 
+        '-i', file_list, 
+        '-c:v', encoder, 
+        '-b:v', '5M', 
+        output_file
     ]
     subprocess.run(cmd)
 
