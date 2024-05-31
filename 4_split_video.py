@@ -11,11 +11,18 @@ def format_time(time_str):
 def escape_text(text):
     return text.replace(":", r'\:').replace(",", r'\,').replace("'", r"\'")
 
-def adjust_time(time_str, delta_seconds):
+def get_seek_time(time_str, delta_seconds):
     """Adjust the given time string by delta_seconds and return the new time string."""
     time_obj = datetime.datetime.strptime(time_str.split('.')[0], '%H:%M:%S')
     adjusted_time = time_obj + datetime.timedelta(seconds=delta_seconds)
     return adjusted_time.strftime('%H:%M:%S')
+
+def calculate_seek_offset(start, seek_time):
+    """Calculate the offset between actual start time and the initial fast seek."""
+    start_time = datetime.datetime.strptime(start, '%H:%M:%S.%f')
+    adjusted_start_time = datetime.datetime.strptime(seek_time, '%H:%M:%S')
+    delta = start_time - adjusted_start_time
+    return str(delta)
 
 def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, encoder, overlay=False):
     commands = []
@@ -30,8 +37,9 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, encoder, ov
         if not os.path.exists(output_file):
             cmd = [
                 'ffmpeg', 
+                '-ss', seek_time,
                 '-i', video_file, 
-                '-ss', start, 
+                '-ss', seek_offset,
                 '-to', end, 
                 '-c:v', encoder, 
                 '-b:v', '5M'
