@@ -37,6 +37,20 @@
             ]
         },
         {
+            "name": "3_srt_editor (save)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "3_srt_editor.py",
+            "args": [
+                "-i", "2",
+                "-v", "data/2024-04-22 22-27-37.mkv",
+                "-S", "data/2024-04-22 22-27-37_merged.srt",
+                "-s", "1.0", 
+                "-e", "1.0",
+                "--save"
+            ]
+        },
+        {
             "name": "4_split_video (with overlay, apple)",
             "type": "debugpy",
             "request": "launch",
@@ -48,5 +62,11 @@
                 "--overlay"
             ]
         },
+        {
+            "name": "Debug tests",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "77_run_tests.py"
+        }
     ]
 }

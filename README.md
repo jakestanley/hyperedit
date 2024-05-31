@@ -9,7 +9,10 @@ You've recorded some footage with multiple audio tracks but there's a lot of sil
 ## Requirements
 
 - vosk-transcriber
+    - `pipx install vosk`
 - mplayer
+    - Windows: `scoop install mplayer`
+    - Mac: `brew install mplayer`
 - ffmpeg (ideally with hardware encoding support)
 - python
 
@@ -19,5 +22,3 @@ You've recorded some footage with multiple audio tracks but there's a lot of sil
 - Enhance SRT editor
 - More hardware acceleration support
 - Improve performance. Seriously, it's slow as
-
-
