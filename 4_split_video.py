@@ -1,5 +1,6 @@
 import subprocess
 import os
+import datetime
 
 from py.args import parseSplitVideoArgs
 from py.srt import parse_srt
@@ -9,6 +10,12 @@ def format_time(time_str):
 
 def escape_text(text):
     return text.replace(":", r'\:').replace(",", r'\,').replace("'", r"\'")
+
+def adjust_time(time_str, delta_seconds):
+    """Adjust the given time string by delta_seconds and return the new time string."""
+    time_obj = datetime.datetime.strptime(time_str.split('.')[0], '%H:%M:%S')
+    adjusted_time = time_obj + datetime.timedelta(seconds=delta_seconds)
+    return adjusted_time.strftime('%H:%M:%S')
 
 def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, overlay=False):
     commands = []
