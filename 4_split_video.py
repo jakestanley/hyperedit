@@ -26,6 +26,13 @@ def calculate_seek_offset(start, seek_time):
     delta = start_time - adjusted_start_time
     return str(delta)
 
+def calculate_duration(start, end):
+    """Calculate the duration between the start and end times."""
+    start_time = datetime.datetime.strptime(start, '%H:%M:%S.%f')
+    end_time = datetime.datetime.strptime(end, '%H:%M:%S.%f')
+    duration = end_time - start_time
+    return str(duration)
+
 def get_hardware(gpu):
     # TODO case insensitive
     if gpu == 'apple':
@@ -51,9 +58,8 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
         formatted_end = format_time(end)
         seek_time = get_seek_time(start, -2)
         seek_offset = calculate_seek_offset(start, seek_time)
-        end_seek_offset = calculate_seek_offset(end, start)
+        duration = calculate_duration(start, end)
         output_file = f"{output_prefix}_{srt_id}_{formatted_start}_to_{formatted_end}.mp4"
-        print(f"Start time {start} using Seek time {seek_time} with offset {seek_offset} - {end_seek_offset}")
         
         ## OVERWRITE
         if not os.path.exists(output_file):
@@ -62,7 +68,7 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
                 '-ss', seek_time,
                 '-i', video_file, 
                 '-ss', seek_offset,
-                '-to', end_seek_offset, 
+                '-t', duration, 
                 '-c:v', encoder, 
                 '-b:v', '5M'
             ]
