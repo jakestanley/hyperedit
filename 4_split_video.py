@@ -42,12 +42,10 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, encoder, ov
     return commands, output_files, srt_ids
 
 def run_ffmpeg_commands(commands, srt_ids):
-    i = 0
     with open('ffmpeg.log', 'w') as log:
-        for cmd in commands:
-            i+=1
-            print(f"Splitting clip on SRT {srt_ids[i]} of {len(srt_ids)}")
-            subprocess.run(cmd, stdout=log, stderr=log)
+        for i in range(len(commands)):
+            print(f"Splitting clip {i+1} of {len(srt_ids)}")
+            subprocess.run(commands[i], stdout=log, stderr=log)
 
 def create_file_list(output_files, list_filename):
     with open(list_filename, 'w') as file:
