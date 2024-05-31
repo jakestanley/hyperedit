@@ -1,0 +1,51 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "1_extract_dialog",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "1_extract_dialog.py",
+            "args": [
+                "-v", "data/2024-04-22 22-27-37.mkv",
+                "-t", "1", "3"
+            ]
+        },
+        {
+            "name": "2_transcribe",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "2_transcribe.py",
+            "args": [
+                "-a", "data/2024-04-22 22-27-37_merged.wav"
+            ]
+        },
+        {
+            "name": "3_srt_editor (preview)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "3_srt_editor.py",
+            "args": [
+                "-i", "2",
+                "-v", "data/2024-04-22 22-27-37.mkv",
+                "-S", "data/2024-04-22 22-27-37_merged.srt",
+                "-s", "0.5", 
+                "-e", "0.5"
+            ]
+        },
+        {
+            "name": "4_split_video (with overlay)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "4_split_video.py",
+            "args": [
+                "-v", "data/2024-04-22 22-27-37.mkv",
+                "-S", "data/2024-04-22 22-27-37_merged.srt",
+                "--overlay"
+            ]
+        },
+    ]
+}
