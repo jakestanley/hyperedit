@@ -112,9 +112,12 @@ final_output = f"{output_prefix}_final.mp4"
 
 # Parse SRT and generate FFmpeg commands
 time_ranges = parse_srt(srt_file_path)
-print(f"Time ranges before deaggression: {len(time_ranges)}")
-time_ranges = deaggress(time_ranges, 1)
-print(f"Time ranges after deaggression: {len(time_ranges)}")
+print(f"SRTs: {len(time_ranges)}")
+if args.deaggress_seconds:
+    time_ranges = deaggress(time_ranges, args.deaggress_seconds)
+    print(f"SRTs after deaggression: {len(time_ranges)}")
+    # TODO feels like deaggression should still happen in the transcribe script
+
 ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.overlay)
 
 # Run the FFmpeg commands to split the video

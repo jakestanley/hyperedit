@@ -2,7 +2,7 @@ import re
 
 from py.time import seconds_to_hmsm
 
-def merge(time_ranges):
+def _merge(time_ranges):
     """Merge overlapping subtitles."""
     merged_time_ranges = []
     for srt_id, start_time, end_time in time_ranges:
@@ -27,7 +27,7 @@ def deaggress(time_ranges, seconds=0.5):
         deaggregated_start_time = start_seconds - seconds
         deaggregated_end_time = end_seconds + seconds
         deaggregated_time_ranges.append((srt_id, deaggregated_start_time, deaggregated_end_time))
-    return merge(deaggregated_time_ranges)
+    return _merge(deaggregated_time_ranges)
 
 def parse_srt(file_path):
     with open(file_path, 'r') as file:
@@ -43,7 +43,7 @@ def parse_srt(file_path):
         end_time = srt_timestamp_to_seconds(match[2])
         time_ranges.append((srt_id, start_time, end_time))
     
-    return time_ranges
+    return _merge(time_ranges)
 
 def srt_timestamp_to_seconds(time_str):
     """Convert a time string in hh:mm:ss.sss format to seconds (float)."""
