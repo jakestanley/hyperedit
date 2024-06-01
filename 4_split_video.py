@@ -5,27 +5,15 @@ import time
 
 from py.args import parseSplitVideoArgs
 from py.srt import parse_srt, seconds_to_srt_timestamp
-from py.ffmpeg import seconds_to_ffmpeg_timestamp as stff
+from py.ffmpeg import get_params_for_gpu, seconds_to_ffmpeg_timestamp as stff
 from py.time import seconds_to_output_timestamp
 
 def escape_text(text):
     return text.replace(":", r'\:').replace(",", r'\,').replace("'", r"\'")
 
-def get_hardware(gpu):
-    if str.lower(gpu) == 'apple':
-        encoder = 'h264_videotoolbox'
-        hwaccel = 'videotoolbox'
-    elif str.lower(gpu) == 'nvidia':
-        encoder = 'h264_nvenc'
-        hwaccel = 'cuvid'
-    else:
-        raise Exception(f"Invalid GPU: {gpu}")
-
-    return encoder, hwaccel
-
 def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overlay=False):
 
-    encoder, hwaccel = get_hardware(gpu)
+    gpu_params = get_params_for_gpu(gpu)
 
     commands = []
     output_files = []
@@ -37,9 +25,13 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
         seek_offset = start - seek_time
         duration = end - start
         output_file = f"{output_prefix}_{srt_id}_{formatted_start}_to_{formatted_end}.mp4"
-        
-        ## OVERWRITE
-        if not os.path.exists(output_file):
+
+        if overlay:
+            preset = gpu_params['fast_preset']
+        else:
+            preset = gpu_params['quality_preset']
+
+        if not os.path.exists(output_file): # TODO different options for full render
             cmd = [
                 'ffmpeg',
                 # '-hwaccel', hwaccel, # this doesn't work on mac OR windows right now
@@ -47,13 +39,14 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
                 '-i', video_file, 
                 '-ss', stff(seek_offset),
                 '-t', stff(duration), 
-                '-c:v', encoder, 
+                '-c:v', gpu_params['encoder'], 
+                gpu_params['preset_param'], preset,
                 '-b:v', '5M',
                 # Map all video and audio streams
                 '-map', '0:v', '-map', '0:a'
             ]
 
-            if overlay:
+            if overlay: # TODO: customise overlay more, maybe include source SRTs, date, etc
                 human_readable_text = escape_text(f"ID: {srt_id}, Start: {seconds_to_srt_timestamp(start)}, End: {seconds_to_srt_timestamp(end)}")
                 drawtext = f"drawtext=text='{human_readable_text}':fontsize=72:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:x=10:y=10"
                 cmd.extend(['-vf', drawtext])
@@ -82,7 +75,7 @@ def create_file_list(output_files, list_filename):
 
 def concatenate_clips(file_list, output_file, gpu):
 
-    encoder, hwaccel = get_hardware(gpu)
+    gpu_params = get_params_for_gpu(gpu)
 
     cmd = [
         'ffmpeg', 
@@ -90,7 +83,7 @@ def concatenate_clips(file_list, output_file, gpu):
         '-f', 'concat', 
         '-safe', '0', 
         '-i', file_list, 
-        '-c:v', encoder, 
+        '-c:v', gpu_params['encoder'],
         '-b:v', '5M', 
         output_file
     ]
