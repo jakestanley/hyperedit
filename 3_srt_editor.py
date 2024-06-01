@@ -2,7 +2,7 @@ import subprocess
 import os
 
 from py.args import parseSrtEditorArgs
-from py.srt import parse_srt, srt_timestamp_to_seconds, seconds_to_srt_timestamp
+from py.srt import parse_srt, seconds_to_srt_timestamp
 
 def format_entry(entry):
     return f"{entry[0]}\n{entry[1]}\n{entry[2]}"
@@ -12,12 +12,12 @@ def replace_or_add_srt_entry(srt_entries, srt_id, new_start, new_end, new_text):
     for i in range(len(srt_entries)):
         entry = srt_entries[i]
         if int(entry[0]) == srt_id:
-            srt_entries[i] = [srt_id, f"{new_start} --> {new_end}", new_text]
+            srt_entries[i] = [srt_id, f"{seconds_to_srt_timestamp(new_start)} --> {seconds_to_srt_timestamp(new_end)}", new_text]
             entry_found = True
             break
     
     if not entry_found:
-        new_entry = [srt_id, f"{new_start} --> {new_end}", new_text]
+        new_entry = [srt_id, f"{seconds_to_srt_timestamp(new_start)} --> {seconds_to_srt_timestamp(new_end)}", new_text]
         srt_entries.append(new_entry)
         srt_entries.sort(key=lambda e: e[0])
 
@@ -50,8 +50,8 @@ if args.command != "remove":
     start_offset = args.start_offset
     end_offset = args.end_offset
 
-    start = srt_timestamp_to_seconds(srt[1]) - start_offset
-    end = srt_timestamp_to_seconds(srt[2]) + end_offset
+    start = srt[1] - start_offset
+    end = srt[2] + end_offset
 
     duration = end - start
 
@@ -66,7 +66,7 @@ if args.command == "edit" or args.command == "remove":
         srt_entries = []
 
     if args.command == "edit":
-        replace_or_add_srt_entry(srt_entries, srt_id, seconds_to_srt_timestamp(start), seconds_to_srt_timestamp(end), 'text unused')
+        replace_or_add_srt_entry(srt_entries, srt_id, start, end, 'text unused')
     else:
         remove_srt_entry(srt_entries, srt_id)
     
