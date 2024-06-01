@@ -1,5 +1,7 @@
 import re
 
+from py.time import seconds_to_hmsm
+
 def parse_srt(file_path):
     with open(file_path, 'r') as file:
         content = file.read()
@@ -23,12 +25,9 @@ def srt_timestamp_to_seconds(time_str):
     return int(h) * 3600 + int(m) * 60 + float(s) + int(ms) / 1000.0
 
 def seconds_to_srt_timestamp(seconds):
-    # Calculate hours, minutes, and seconds
-    hours = int(seconds // 3600)
-    minutes = int((seconds % 3600) // 60)
-    secs = int(seconds % 60)
-    milliseconds = int((seconds - int(seconds)) * 1000)
-    
+
+    hours, minutes, secs, milliseconds = seconds_to_hmsm(seconds)
+
     # Format the timestamp as HH:MM:SS,mmm
     timestamp = f"{hours:02}:{minutes:02}:{secs:02},{milliseconds:03}"
     

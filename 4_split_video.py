@@ -4,35 +4,12 @@ import datetime
 import time
 
 from py.args import parseSplitVideoArgs
-from py.srt import parse_srt
-
-def format_time(time_str):
-    return time_str.replace(':', '-').replace('.', '_')
+from py.srt import parse_srt, seconds_to_srt_timestamp
+from py.ffmpeg import seconds_to_ffmpeg_timestamp as stff
+from py.time import seconds_to_output_timestamp
 
 def escape_text(text):
     return text.replace(":", r'\:').replace(",", r'\,').replace("'", r"\'")
-
-def get_seek_time(time_str, delta_seconds):
-    """Get formatted seek time"""
-    time_obj = datetime.datetime.strptime(time_str, '%H:%M:%S.%f')
-    adjusted_time = time_obj + datetime.timedelta(seconds=delta_seconds)
-    if adjusted_time < datetime.datetime(1900, 1, 1):
-        return '00:00:00.000'
-    return adjusted_time.strftime('%H:%M:%S.%f')
-
-def calculate_seek_offset(start, seek_time):
-    """Calculate the offset between actual start time and the initial fast seek."""
-    start_time = datetime.datetime.strptime(start, '%H:%M:%S.%f')
-    adjusted_start_time = datetime.datetime.strptime(seek_time, '%H:%M:%S.%f')
-    delta = start_time - adjusted_start_time
-    return str(delta)
-
-def calculate_duration(start, end):
-    """Calculate the duration between the start and end times."""
-    start_time = datetime.datetime.strptime(start, '%H:%M:%S.%f')
-    end_time = datetime.datetime.strptime(end, '%H:%M:%S.%f')
-    duration = end_time - start_time
-    return str(duration)
 
 def get_hardware(gpu):
     if str.lower(gpu) == 'apple':
@@ -54,11 +31,11 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
     output_files = []
     srt_ids = []
     for srt_id, start, end in time_ranges:
-        formatted_start = format_time(start)
-        formatted_end = format_time(end)
-        seek_time = get_seek_time(start, -2)
-        seek_offset = calculate_seek_offset(start, seek_time)
-        duration = calculate_duration(start, end)
+        formatted_start = seconds_to_output_timestamp(start)
+        formatted_end = seconds_to_output_timestamp(end)
+        seek_time = start - 2
+        seek_offset = start - seek_time
+        duration = end - start
         output_file = f"{output_prefix}_{srt_id}_{formatted_start}_to_{formatted_end}.mp4"
         
         ## OVERWRITE
@@ -66,10 +43,10 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
             cmd = [
                 'ffmpeg',
                 # '-hwaccel', hwaccel, # this doesn't work on mac OR windows right now
-                '-ss', seek_time,
+                '-ss', stff(seek_time),
                 '-i', video_file, 
-                '-ss', seek_offset,
-                '-t', duration, 
+                '-ss', stff(seek_offset),
+                '-t', stff(duration), 
                 '-c:v', encoder, 
                 '-b:v', '5M',
                 # Map all video and audio streams
@@ -77,7 +54,7 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
             ]
 
             if overlay:
-                human_readable_text = escape_text(f"ID: {srt_id}, Start: {start}, End: {end}")
+                human_readable_text = escape_text(f"ID: {srt_id}, Start: {seconds_to_srt_timestamp(start)}, End: {seconds_to_srt_timestamp(end)}")
                 drawtext = f"drawtext=text='{human_readable_text}':fontsize=72:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:x=10:y=10"
                 cmd.extend(['-vf', drawtext])
             cmd.append(output_file)
@@ -145,10 +122,5 @@ create_file_list(output_files, list_filename)
 
 # Concatenate the split clips into a single video
 concatenate_clips(list_filename, final_output, args.gpu)
-
-# Clean up the intermediate files (optional)
-# for output_file in output_files:
-#     os.remove(output_file)
-# os.remove(list_filename)
 
 print("Final video has been successfully generated.")
