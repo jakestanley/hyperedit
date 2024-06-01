@@ -1,56 +1,29 @@
 import subprocess
 import os
-import re
 
 from py.args import parseSrtEditorArgs
 from py.srt import parse_srt, srt_timestamp_to_seconds, seconds_to_srt_timestamp
 
-def parse_entry(entry):
-    lines = entry.split('\n')
-    srt_id = int(lines[0])
-    timestamp = lines[1]
-    text = '\n'.join(lines[2:])
-    return {
-        'id': srt_id,
-        'timestamp': timestamp,
-        'text': text
-    }
-
-def read_srt(file_path):
-    if not os.path.exists(file_path):
-        return []
-    with open(file_path, 'r', encoding='utf-8') as file:
-        content = file.read()
-    entries = content.strip().split('\n\n')
-    if entries == ['']:
-        return []
-    parsed_entries = [parse_entry(entry) for entry in entries]
-    return parsed_entries
-
 def format_entry(entry):
-    return f"{entry['id']}\n{entry['timestamp']}\n{entry['text']}"
+    return f"{entry[0]}\n{entry[1]}\n{entry[2]}"
 
 def replace_or_add_srt_entry(srt_entries, srt_id, new_start, new_end, new_text):
     entry_found = False
-    for entry in srt_entries:
-        if entry['id'] == srt_id:
-            entry['timestamp'] = f"{new_start} --> {new_end}"
-            entry['text'] = new_text
+    for i in range(len(srt_entries)):
+        entry = srt_entries[i]
+        if int(entry[0]) == srt_id:
+            srt_entries[i] = [srt_id, f"{new_start} --> {new_end}", new_text]
             entry_found = True
             break
     
     if not entry_found:
-        new_entry = {
-            'id': srt_id,
-            'timestamp': f"{new_start} --> {new_end}",
-            'text': new_text
-        }
+        new_entry = [srt_id, f"{new_start} --> {new_end}", new_text]
         srt_entries.append(new_entry)
-        srt_entries.sort(key=lambda e: e['id'])
+        srt_entries.sort(key=lambda e: e[0])
 
 def remove_srt_entry(srt_entries, srt_id):
     for entry in srt_entries:
-        if entry['id'] == srt_id:
+        if int(entry[0]) == srt_id:
             srt_entries.remove(entry)
             break
 
@@ -87,7 +60,11 @@ if args.command == "edit" or args.command == "remove":
     basename, _ = os.path.splitext(args.srt_file_path)
     srt_overrides_path = f"{basename}-overrides.srt"
 
-    srt_entries = read_srt(srt_overrides_path)
+    if os.path.exists(srt_overrides_path):
+        srt_entries = parse_srt(srt_overrides_path)
+    else:
+        srt_entries = []
+
     if args.command == "edit":
         replace_or_add_srt_entry(srt_entries, srt_id, seconds_to_srt_timestamp(start), seconds_to_srt_timestamp(end), 'text unused')
     else:

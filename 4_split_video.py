@@ -134,7 +134,6 @@ final_output = f"{output_prefix}_final.mp4"
 # TODO: SRT ID skip list
 
 # Parse SRT and generate FFmpeg commands
-# limited to 10 for testing purposes
 time_ranges = parse_srt(srt_file_path)
 ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.overlay)
 
