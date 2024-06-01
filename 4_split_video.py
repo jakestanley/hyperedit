@@ -4,7 +4,7 @@ import datetime
 import time
 
 from py.args import parseSplitVideoArgs
-from py.srt import parse_srt, seconds_to_srt_timestamp
+from py.srt import parse_srt, seconds_to_srt_timestamp, deaggress
 from py.ffmpeg import seconds_to_ffmpeg_timestamp as stff
 from py.time import seconds_to_output_timestamp
 
@@ -112,6 +112,9 @@ final_output = f"{output_prefix}_final.mp4"
 
 # Parse SRT and generate FFmpeg commands
 time_ranges = parse_srt(srt_file_path)
+print(f"Time ranges before deaggression: {len(time_ranges)}")
+time_ranges = deaggress(time_ranges, 1)
+print(f"Time ranges after deaggression: {len(time_ranges)}")
 ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.overlay)
 
 # Run the FFmpeg commands to split the video
