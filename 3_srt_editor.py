@@ -2,22 +2,19 @@ import subprocess
 import os
 
 from py.args import parseSrtEditorArgs
-from py.srt import parse_srt, seconds_to_srt_timestamp
-
-def format_entry(entry):
-    return f"{entry[0]}\n{entry[1]}\n{entry[2]}"
+from py.srt import parse_srt, seconds_to_srt_timestamp, write_srt, create_srt_entry
 
 def replace_or_add_srt_entry(srt_entries, srt_id, new_start, new_end, new_text):
     entry_found = False
     for i in range(len(srt_entries)):
         entry = srt_entries[i]
         if int(entry[0]) == srt_id:
-            srt_entries[i] = [srt_id, f"{seconds_to_srt_timestamp(new_start)} --> {seconds_to_srt_timestamp(new_end)}", new_text]
+            srt_entries[i] = create_srt_entry(srt_id, new_start, new_end, new_text)
             entry_found = True
             break
     
     if not entry_found:
-        new_entry = [srt_id, f"{seconds_to_srt_timestamp(new_start)} --> {seconds_to_srt_timestamp(new_end)}", new_text]
+        new_entry = create_srt_entry(srt_id, new_start, new_end, new_text)
         srt_entries.append(new_entry)
         srt_entries.sort(key=lambda e: e[0])
 
@@ -26,11 +23,6 @@ def remove_srt_entry(srt_entries, srt_id):
         if int(entry[0]) == srt_id:
             srt_entries.remove(entry)
             break
-
-def write_srt(file_path, srt_entries):
-    with open(file_path, 'w', encoding='utf-8') as file:
-        content = '\n\n'.join(format_entry(entry) for entry in srt_entries)
-        file.write(content)
 
 args = parseSrtEditorArgs()
 

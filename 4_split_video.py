@@ -4,7 +4,7 @@ import datetime
 import time
 
 from py.args import parseSplitVideoArgs
-from py.srt import parse_srt, seconds_to_srt_timestamp, deaggress
+from py.srt import parse_srt, seconds_to_srt_timestamp
 from py.ffmpeg import seconds_to_ffmpeg_timestamp as stff
 from py.time import seconds_to_output_timestamp
 
@@ -108,15 +108,9 @@ directory = os.path.dirname(args.video_file_path)
 output_prefix, _ = os.path.splitext(args.video_file_path)
 list_filename = 'file_list.txt'
 final_output = f"{output_prefix}_final.mp4"
-# TODO: SRT ID skip list
 
 # Parse SRT and generate FFmpeg commands
 time_ranges = parse_srt(srt_file_path)
-print(f"SRTs: {len(time_ranges)}")
-if args.deaggress_seconds:
-    time_ranges = deaggress(time_ranges, args.deaggress_seconds)
-    print(f"SRTs after deaggression: {len(time_ranges)}")
-    # TODO feels like deaggression should still happen in the transcribe script
 
 ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.overlay)
 

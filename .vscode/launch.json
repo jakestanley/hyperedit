@@ -24,6 +24,17 @@
             ]
         },
         {
+            "name": "deaggress",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "deaggress.py",
+            "args": [
+                "-S", "data/2024-04-22 22-27-37_merged.srt",
+                // deaggress by 1 second
+                "-d", "1"
+            ]
+        },
+        {
             "name": "3_srt_editor (preview)",
             "type": "debugpy",
             "request": "launch",
@@ -71,19 +82,6 @@
                 "-S", "data/2024-04-22 22-27-37_merged.srt",
                 "-g", "apple",
                 "--overlay"
-            ]
-        },
-        {
-            "name": "4_split_video (with overlay, apple, deaggress)",
-            "type": "debugpy",
-            "request": "launch",
-            "program": "4_split_video.py",
-            "args": [
-                "-v", "data/2024-04-22 22-27-37.mkv",
-                "-S", "data/2024-04-22 22-27-37_merged.srt",
-                "-g", "apple",
-                "--overlay",
-                "-d", "1"
             ]
         },
         {

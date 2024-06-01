@@ -16,10 +16,9 @@ def _merge(time_ranges):
             merged_time_ranges.append((srt_id, start_time, end_time))
     return merged_time_ranges
 
-# TODO: actually make this part of the transcription?
-#   - Time in SRT format
-#   - Time in seconds as float
-#   - Time in ffmpeg friendly format
+def _format_entry(entry):
+    return f"{entry[0]}\n{entry[1]}\n{entry[2]}"
+
 def deaggress(time_ranges, seconds=0.5):
     """Deaggress the subtitles by a given amount of seconds."""
     deaggregated_time_ranges = []
@@ -42,8 +41,17 @@ def parse_srt(file_path):
         start_time = srt_timestamp_to_seconds(match[1])
         end_time = srt_timestamp_to_seconds(match[2])
         time_ranges.append((srt_id, start_time, end_time))
-    
+
+    # TODO merging may reduce the number of SRTs if the user has made modifications
     return _merge(time_ranges)
+
+def create_srt_entry(srt_id, start, end, text):
+    return [srt_id, f"{seconds_to_srt_timestamp(start)} --> {seconds_to_srt_timestamp(end)}", text]
+
+def write_srt(file_path, srt_entries):
+    with open(file_path, 'w', encoding='utf-8') as file:
+        content = '\n\n'.join(_format_entry(entry) for entry in srt_entries)
+        file.write(content)
 
 def srt_timestamp_to_seconds(time_str):
     """Convert a time string in hh:mm:ss.sss format to seconds (float)."""

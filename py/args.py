@@ -36,6 +36,13 @@ def parseTranscribeArgs():
 
     return parser.parse_args()
 
+def parseDeaggressArgs():
+    parser = argparse.ArgumentParser()
+
+    _addSrtPathArgs(parser)
+    parser.add_argument("-d", "--deaggress-seconds", required=True, type=float, help="add n seconds of padding around SRTs")
+
+    return parser.parse_args()
 
 def parseSrtEditorArgs():
     parser = argparse.ArgumentParser()
@@ -75,7 +82,6 @@ def parseSplitVideoArgs():
     _addVideoPathArgs(parser)
     _addSrtPathArgs(parser)
     parser.add_argument("-g", "--gpu", type=str, required=True, help="e.g apple or nvidia")
-    parser.add_argument("-d", "--deaggress-seconds", type=float, help="add seconds of delay around")
     parser.add_argument("--overlay", action='store_true', help="Overlay SRT and timestamps onto clips")
 
     return parser.parse_args()
