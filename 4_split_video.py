@@ -70,7 +70,7 @@ def run_ffmpeg_commands(commands, srt_ids):
 
 def create_file_list(output_files, list_filename):
     with open(list_filename, 'w') as file:
-        for output_file in output_files:
+        for output_file in output_files[0:10]:
             file.write(f"file '{output_file}'\n")
 
 def concatenate_clips(file_list, output_file, gpu):
@@ -102,11 +102,17 @@ video_file_path = args.video_file_path
 directory = os.path.dirname(args.video_file_path)
 output_prefix, _ = os.path.splitext(args.video_file_path)
 list_filename = 'file_list.txt'
-final_output = f"{output_prefix}_final.mp4"
 
-# Parse SRT and generate FFmpeg commands
-time_ranges = parse_srt(srt_file_path)
 
+# Parse SRT
+if args.range:
+    final_output = f"{output_prefix}_final_{args.range[0]}-{args.range[1]}.mp4"
+    time_ranges = parse_srt(srt_file_path)[(args.range[0]-1):(args.range[1]-1)]
+else:
+    final_output = f"{output_prefix}_final.mp4"
+    time_ranges = parse_srt(srt_file_path)
+
+# generate ffmpeg commands
 ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.overlay)
 
 # Run the FFmpeg commands to split the video

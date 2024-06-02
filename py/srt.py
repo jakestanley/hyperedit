@@ -19,14 +19,14 @@ def _merge(time_ranges):
 def _format_entry(entry):
     return f"{entry[0]}\n{entry[1]}\n{entry[2]}"
 
-def deaggress(time_ranges, seconds=0.5):
+def deaggress(time_ranges, seconds=0.5): # TODO cliips appear to be getting cut off
     """Deaggress the subtitles by a given amount of seconds."""
     deaggregated_time_ranges = []
     for srt_id, start_seconds, end_seconds in time_ranges:
         deaggregated_start_time = start_seconds - seconds
         deaggregated_end_time = end_seconds + seconds
         deaggregated_time_ranges.append((srt_id, deaggregated_start_time, deaggregated_end_time))
-    return _merge(deaggregated_time_ranges)
+    return _merge(deaggregated_time_ranges) # TODO: potential bug: merge might not be respecting start/end times of deaggressed clips
 
 def parse_srt(file_path):
     with open(file_path, 'r') as file:
