@@ -11,7 +11,7 @@ from py.time import seconds_to_output_timestamp
 def escape_text(text):
     return text.replace(":", r'\:').replace(",", r'\,').replace("'", r"\'")
 
-def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overlay=False):
+def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overlay=False, overwrite=False):
 
     gpu_params = get_params_for_gpu(gpu)
 
@@ -31,7 +31,7 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
         else:
             preset = gpu_params['quality_preset']
 
-        if not os.path.exists(output_file): # TODO different options for full render
+        if not os.path.exists(output_file) or overwrite: # TODO different options for full render
             cmd = [
                 'ffmpeg',
                 # '-hwaccel', hwaccel, # this doesn't work on mac OR windows right now
@@ -113,7 +113,7 @@ else:
     time_ranges = parse_srt(srt_file_path)
 
 # generate ffmpeg commands
-ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.overlay)
+ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.overlay, args.overwrite)
 
 # Run the FFmpeg commands to split the video
 run_ffmpeg_commands(ffmpeg_commands, srt_ids)

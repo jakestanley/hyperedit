@@ -2,7 +2,7 @@ import subprocess
 import os
 
 from py.args import parseSrtEditorArgs
-from py.srt import parse_srt, seconds_to_srt_timestamp, write_srt, create_srt_entry
+from py.srt import parse_srt, write_srt, create_srt_entry
 
 def replace_or_add_srt_entry(srt_entries, srt_id, new_start, new_end, new_text):
     entry_found = False

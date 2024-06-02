@@ -2,6 +2,12 @@ import argparse
 
 parser = argparse.ArgumentParser()
 
+def _addOverwriteArgs(parser):
+    parser.add_argument('-o', '--overwrite',
+                        action='store_true',
+                        default=False
+                        )
+
 def _addSrtPathArgs(parser):
     parser.add_argument('-S', '--srt-file-path', type=str, 
                         required=True, 
@@ -56,6 +62,7 @@ def parseDeaggressArgs():
     parser = argparse.ArgumentParser()
 
     _addSrtPathArgs(parser)
+    _addOverwriteArgs(parser)
     parser.add_argument("-d", "--deaggress-seconds", required=True, type=float, help="add n seconds of padding around SRTs")
 
     return parser.parse_args()
@@ -91,6 +98,7 @@ def parseSplitVideoArgs():
 
     _addVideoPathArgs(parser)
     _addSrtPathArgs(parser)
+    _addOverwriteArgs(parser)
     parser.add_argument("-g", "--gpu", type=str, required=True, help="e.g apple or nvidia")
     parser.add_argument("--overlay", action='store_true', help="Overlay SRT and timestamps onto clips")
     parser.add_argument("-r", "--range",

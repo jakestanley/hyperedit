@@ -14,7 +14,7 @@ directory = os.path.dirname(srt_file_path)
 basename, _ = os.path.splitext(srt_file_path)
 output_path = f"{basename}_deaggressed_{args.deaggress_seconds}.srt"
 
-if os.path.exists(output_path):
+if os.path.exists(output_path) and not args.overwrite:
     raise Exception(f"Deaggressed SRT by {args.deaggress_seconds} already exists at {output_path}")
 
 print(f"Deaggressing SRT by {args.deaggress_seconds}")
