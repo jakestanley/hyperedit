@@ -28,6 +28,8 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, previe
         if preview:
             output_file = f"{output_prefix}_S{srt_id}_{formatted_start}_to_{formatted_end}_preview.mp4"
             preset = gpu_params['fast_preset']
+            filter_complex.append(f"[0:v]scale=-1:480[v0]")
+            video_maps.append('[v0]')
         else:
             output_file = f"{output_prefix}_S{srt_id}_{formatted_start}_to_{formatted_end}.mp4"
             preset = gpu_params['quality_preset']
@@ -47,12 +49,14 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, previe
                 '-map', '0:v', '-map', '0:a'
             ]
 
-            if preview: # TODO: customise overlay more, maybe include source SRTs, date, etc
-                human_readable_text = escape_text(f"ID: {srt_id}, Start: {seconds_to_srt_timestamp(start)}, End: {seconds_to_srt_timestamp(end)}")
-                drawtext = f"drawtext=text='{human_readable_text}':fontsize=72:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:x=10:y=10"
-                cmd.extend(['-vf', drawtext])
+            if len(filter_complex) > 0:
+                cmd.extend(['-filter_complex', ';'.join(filter_complex)])
+
+            for map in video_maps:
+                cmd.extend(['-map', map])
             cmd.append(output_file)
 
+            # add this ffmpeg command to the list of ffmpeg commands to run
             commands.append(cmd)
             srt_ids.append(srt_id)
         output_files.append(output_file)
