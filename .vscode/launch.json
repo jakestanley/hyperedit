@@ -74,7 +74,7 @@
             ]
         },
         {
-            "name": "4_split_video (with overlay, apple)",
+            "name": "4_split_video (with preview, apple)",
             "type": "debugpy",
             "request": "launch",
             "program": "4_split_video.py",
@@ -82,7 +82,7 @@
                 "-v", "data/2024-04-22 22-27-37.mkv",
                 "-S", "data/2024-04-22 22-27-37_merged.srt",
                 "-g", "apple",
-                "--overlay"
+                "--preview"
             ]
         },
         {

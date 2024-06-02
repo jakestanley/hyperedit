@@ -100,7 +100,7 @@ def parseSplitVideoArgs():
     _addSrtPathArgs(parser)
     _addOverwriteArgs(parser)
     parser.add_argument("-g", "--gpu", type=str, required=True, help="e.g apple or nvidia")
-    parser.add_argument("--overlay", action='store_true', help="Overlay SRT and timestamps onto clips")
+    parser.add_argument("--preview", action='store_true', help="Overlay SRT and timestamps onto clips and used fast preset")
     parser.add_argument("-r", "--range",
                         required=False, 
                         # description='Range of clips to render',

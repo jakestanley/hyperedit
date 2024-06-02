@@ -11,7 +11,7 @@ from py.time import seconds_to_output_timestamp
 def escape_text(text):
     return text.replace(":", r'\:').replace(",", r'\,').replace("'", r"\'")
 
-def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overlay=False, overwrite=False):
+def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, preview=False, overwrite=False, args=None):
 
     gpu_params = get_params_for_gpu(gpu)
 
@@ -24,16 +24,17 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
         seek_time = start - 2
         seek_offset = start - seek_time
         duration = end - start
-        output_file = f"{output_prefix}_{srt_id}_{formatted_start}_to_{formatted_end}.mp4"
 
-        if overlay:
+        if preview:
+            output_file = f"{output_prefix}_S{srt_id}_{formatted_start}_to_{formatted_end}_preview.mp4"
             preset = gpu_params['fast_preset']
         else:
+            output_file = f"{output_prefix}_S{srt_id}_{formatted_start}_to_{formatted_end}.mp4"
             preset = gpu_params['quality_preset']
 
         if not os.path.exists(output_file) or overwrite: # TODO different options for full render
             cmd = [
-                'ffmpeg',
+                'ffmpeg', '-y',
                 # '-hwaccel', hwaccel, # this doesn't work on mac OR windows right now
                 '-ss', stff(seek_time),
                 '-i', video_file, 
@@ -46,7 +47,7 @@ def generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, overla
                 '-map', '0:v', '-map', '0:a'
             ]
 
-            if overlay: # TODO: customise overlay more, maybe include source SRTs, date, etc
+            if preview: # TODO: customise overlay more, maybe include source SRTs, date, etc
                 human_readable_text = escape_text(f"ID: {srt_id}, Start: {seconds_to_srt_timestamp(start)}, End: {seconds_to_srt_timestamp(end)}")
                 drawtext = f"drawtext=text='{human_readable_text}':fontsize=72:fontcolor=white:box=1:boxcolor=black@0.5:boxborderw=5:x=10:y=10"
                 cmd.extend(['-vf', drawtext])
@@ -113,7 +114,7 @@ else:
     time_ranges = parse_srt(srt_file_path)
 
 # generate ffmpeg commands
-ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.overlay, args.overwrite)
+ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.preview, args.overwrite, args)
 
 # Run the FFmpeg commands to split the video
 run_ffmpeg_commands(ffmpeg_commands, srt_ids)
