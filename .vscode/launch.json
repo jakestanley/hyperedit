@@ -40,9 +40,9 @@
             "request": "launch",
             "program": "3_srt_editor.py",
             "args": [
+                "preview",
                 "-i", "2",
                 "-S", "data/2024-04-22 22-27-37_merged.srt",
-                "preview",
                 "-v", "data/2024-04-22 22-27-37.mkv",
                 "-s", "0.5", 
                 "-e", "0.5"
@@ -54,9 +54,9 @@
             "request": "launch",
             "program": "3_srt_editor.py",
             "args": [
+                "edit",
                 "-i", "2",
                 "-S", "data/2024-04-22 22-27-37_merged.srt",
-                "edit",
                 "-s", "1.0", 
                 "-e", "1.0"
             ]
@@ -67,9 +67,9 @@
             "request": "launch",
             "program": "3_srt_editor.py",
             "args": [
+                "remove",
                 "-i", "2",
                 "-S", "data/2024-04-22 22-27-37_merged.srt",
-                "remove"
             ]
         },
         {

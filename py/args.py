@@ -12,6 +12,17 @@ def _addVideoPathArgs(parser):
                         required=True, 
                         # default='2024-04-22 22-27-37.mkv',
                         type=str)
+    
+def _addSrtIdArgs(parser):
+    parser.add_argument('-i', '--srt-id', type=int, 
+                required=True, 
+                # default=1
+                )
+    
+def _addStartEndOffsetArgs(parser):
+    parser.add_argument('-s', '--start-offset', type=float, default=0.0)
+    parser.add_argument('-e', '--end-offset',   type=float, default=0.0)
+
 
 def parseExtractDialogArgs():
     parser = argparse.ArgumentParser()
@@ -47,32 +58,25 @@ def parseDeaggressArgs():
 def parseSrtEditorArgs():
     parser = argparse.ArgumentParser()
 
-    # global options
-    _addSrtPathArgs(parser)
-    parser.add_argument('-i', '--srt-id', type=int, 
-                    required=True, 
-                    # default=1
-                    )
-
-    # Create a parent parser for shared arguments
-    edit_preview_parent_parser = argparse.ArgumentParser(add_help=False)
-
-    # Add shared arguments to the parent parser
-    edit_preview_parent_parser.add_argument('-s', '--start-offset', type=float, default=0.0)
-    edit_preview_parent_parser.add_argument('-e', '--end-offset',   type=float, default=0.0)
-
     # command parser
     subparsers = parser.add_subparsers(dest='command')
 
     # preview subcommand and arguments
-    preview_subparser = subparsers.add_parser('preview', parents=[edit_preview_parent_parser], description="Preview edit")
+    preview_subparser = subparsers.add_parser('preview', description="Preview edit")
+    _addSrtPathArgs(preview_subparser)
     _addVideoPathArgs(preview_subparser)
+    _addSrtIdArgs(preview_subparser)
+    _addStartEndOffsetArgs(preview_subparser)
 
     # edit subcommand and arguments
-    subparsers.add_parser('edit', parents=[edit_preview_parent_parser], description="Save edit")
+    edit_subparser = subparsers.add_parser('edit', description="Save edit")
+    _addSrtPathArgs(edit_subparser)
+    _addSrtIdArgs(edit_subparser)
+    _addStartEndOffsetArgs(edit_subparser)
 
     # remove just uses only global options
-    subparsers.add_parser('remove', description="Remove edit")
+    remove_subparser = subparsers.add_parser('remove', description="Remove edit")
+    _addSrtIdArgs(remove_subparser)
 
     return parser.parse_args()
 
