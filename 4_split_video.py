@@ -91,7 +91,7 @@ def concatenate_clips(file_list, output_file, gpu):
         e = subprocess.run(cmd, stdout=log, stderr=log)
         if e.returncode != 0:
             raise(f"Error concatenating clips: ffmpeg returned exit code {e.returncode}")
-
+# TODO: add option to select clip range for rendering (i.e youtube shorts)
 args = parseSplitVideoArgs()
 
 # Paths to your files
