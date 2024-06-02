@@ -35,12 +35,13 @@
             ]
         },
         {
-            "name": "3_srt_editor (preview)",
+            "name": "3_srt_editor (preview, vlc)",
             "type": "debugpy",
             "request": "launch",
             "program": "3_srt_editor.py",
             "args": [
                 "preview",
+                "--player", "vlc",
                 "-i", "2",
                 "-S", "data/2024-04-22 22-27-37_merged.srt",
                 "-v", "data/2024-04-22 22-27-37.mkv",

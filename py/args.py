@@ -13,6 +13,11 @@ def _addVideoPathArgs(parser):
                         # default='2024-04-22 22-27-37.mkv',
                         type=str)
     
+def _addPlayerArgs(parser):
+    parser.add_argument('-p', '--player', type=str, 
+                    default='mplayer'
+                    )
+    
 def _addSrtIdArgs(parser):
     parser.add_argument('-i', '--srt-id', type=int, 
                 required=True, 
@@ -65,6 +70,7 @@ def parseSrtEditorArgs():
     preview_subparser = subparsers.add_parser('preview', description="Preview edit")
     _addSrtPathArgs(preview_subparser)
     _addVideoPathArgs(preview_subparser)
+    _addPlayerArgs(preview_subparser)
     _addSrtIdArgs(preview_subparser)
     _addStartEndOffsetArgs(preview_subparser)
 

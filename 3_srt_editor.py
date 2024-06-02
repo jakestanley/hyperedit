@@ -66,12 +66,22 @@ if args.command == "edit" or args.command == "remove":
 elif args.command == "remove":
     raise("Not yet implemented")
 elif args.command == "preview":
-    command = [
-        'mplayer',
-        '-ss', f'{start}',
-        '-endpos', f'{duration}',
-        args.video_file_path
-    ]
+    if args.player == 'vlc':
+        command = [
+            'vlc',
+            args.video_file_path,
+            '--start-time', f'{start}',
+            '--stop-time', f'{start + duration}'
+        ]
+    elif args.player == 'mplayer':
+        command = [
+            'mplayer',
+            '-ss', f'{start}',
+            '-endpos', f'{duration}',
+            args.video_file_path
+        ]
+    else:
+        raise Exception(f"Unsupported player {args.player}")
 
     print(f"Playing SRT {srt_id} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
     subprocess.run(command)
