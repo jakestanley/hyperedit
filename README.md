@@ -31,16 +31,10 @@ In rough priority order
 
 - SRT overrides actually used
     - this may cause problems however if manual editing process has already started. you may need to remove the old ones and re-insert
-- Generate de-aggressed SRT files
-    - do this earlier in the process
-    - note overlapping SRTs will always be merged regardless 
+- SRT overrides may need to be "baked" into the file
 - Higher quality rendering options
-- Selective re-rendering of SRTs
 - Batch mode, i.e point at a folder with an options file and just run it
 - Excludes file for ignoring selected SRTs
-- Overwrite option.
-    - After editing in Resolve for example we can replace the files with high quality ones
-- Lower quality rendering options
 - Improve performance some more
 - Software encoding support
 
