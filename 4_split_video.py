@@ -84,7 +84,9 @@ def concatenate_clips(file_list, output_file, gpu):
         '-safe', '0', 
         '-i', file_list, 
         '-c:v', gpu_params['encoder'],
-        '-b:v', '5M', 
+        '-b:v', '5M',
+        # Map all video and audio streams
+        '-map', '0:v', '-map', '0:a',
         output_file
     ]
     with open('ffmpeg.log', 'a') as log:
