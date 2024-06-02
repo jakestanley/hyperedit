@@ -98,7 +98,7 @@ def run_ffmpeg_commands(commands, srt_ids):
 
 def create_file_list(output_files, list_filename):
     with open(list_filename, 'w') as file:
-        for output_file in output_files[0:10]:
+        for output_file in output_files:
             file.write(f"file '{output_file}'\n")
 
 # TODO separate script for concatenate
@@ -133,7 +133,7 @@ if args.preview:
     output_prefix = f"{os.path.splitext(args.video_file_path)[0]}_preview"
 else:
     output_prefix, _ = os.path.splitext(args.video_file_path)
-list_filename = 'file_list.txt'
+list_filename = f'file_list_{int(time.time())}.txt'
 
 
 # Parse SRT
@@ -148,11 +148,14 @@ else:
 ffmpeg_commands, output_files, srt_ids = generate_ffmpeg_commands(video_file_path, time_ranges, output_prefix, args.gpu, args.preview, args.overwrite, args)
 
 # Run the FFmpeg commands to split the video
-start_time = time.time()
-durations = run_ffmpeg_commands(ffmpeg_commands, srt_ids)
-end_time = time.time()
-print(f"Splitting took {end_time - start_time:.1f} seconds")
-print(f"Average split time: {sum(durations)/len(durations):.1f} seconds")
+if len(ffmpeg_commands) == 0:
+    print("No clips to split.")
+else:
+    start_time = time.time()
+    durations = run_ffmpeg_commands(ffmpeg_commands, srt_ids)
+    end_time = time.time()
+    print(f"Splitting took {end_time - start_time:.1f} seconds")
+    print(f"Average split time: {sum(durations)/len(durations):.1f} seconds")
 
 # Create the file list for concatenation
 create_file_list(output_files, list_filename)
