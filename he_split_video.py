@@ -99,7 +99,7 @@ def _run_ffmpeg_commands(commands, srt_ids):
             end_time = time.time()
             duration = end_time - start_time
             durations.append(duration)
-            print(f" {duration:.1f} seconds. Rolling average: {sum(durations)/len(durations):.1f} seconds. ETA: {((sum(durations)/len(durations))*(len(commands)-i)/60):.1f} minutes")
+            print(f" {duration:.1f} seconds. Rolling average: {sum(durations)/len(durations):.1f} seconds. ETA: {((sum(durations)/len(durations))*(len(commands)-i)/60):.1f} minutes\r", end='', flush=True)
     return durations
 
 def create_file_list(output_files, list_filename):
