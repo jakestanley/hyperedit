@@ -27,6 +27,9 @@ def remove_srt_entry(srt_entries, srt_id):
 
 args = parseSrtEditorArgs()
 
+if not args.command:
+    raise Exception("command is required")
+
 srt_file_path = args.srt_file_path
 srt_id = args.srt_id
 

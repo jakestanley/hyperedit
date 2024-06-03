@@ -30,7 +30,7 @@ def _generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, previ
         maps = []
 
         if preview:
-            output_file = f"{output_prefix}_S{srt_id}_{formatted_start}_to_{formatted_end}_preview.mp4"
+            output_file = f"{output_prefix}_S{srt_id}_{formatted_start}_to_{formatted_end}.mp4"
             preset = gpu_params['fast_preset']
             # scale video
             filter_complex.append(f"[0:v]scale=-1:480[v_scaled]")
