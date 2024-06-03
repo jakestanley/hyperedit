@@ -34,16 +34,17 @@ def _addStartEndOffsetArgs(parser):
     parser.add_argument('-s', '--start-offset', type=float, default=0.0)
     parser.add_argument('-e', '--end-offset',   type=float, default=0.0)
 
+def _addTracksArgs(parser):
+    parser.add_argument('-t', '--tracks',           
+                        required=True, 
+                        # description='Track numbers (zero indexed) that contain voice only',
+                        type=int, nargs='+')
 
 def parseExtractDialogArgs():
     parser = argparse.ArgumentParser()
 
     _addVideoPathArgs(parser)
-    
-    parser.add_argument('-t', '--tracks',           
-                        required=True, 
-                        # description='Track numbers (zero indexed) that contain voice only',
-                        type=int, nargs='+')
+    _addTracksArgs(parser)
 
     return parser.parse_args()
 
@@ -105,5 +106,12 @@ def parseSplitVideoArgs():
                         required=False, 
                         # description='Range of clips to render',
                         type=int, nargs='+')
+
+    return parser.parse_args()
+
+def parseBatchArgs():
+    parser = argparse.ArgumentParser(description='Batch process hyperedit operations')
+    _addVideoPathArgs(parser)
+    _addTracksArgs(parser)
 
     return parser.parse_args()

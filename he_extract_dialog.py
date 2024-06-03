@@ -3,7 +3,7 @@ import os
 
 from py.args import parseExtractDialogArgs
 
-def merge_audio_tracks(input_video, tracks, output_audio):
+def _merge_audio_tracks(input_video, tracks, output_audio):
     # Construct the filter_complex string based on the provided track indices
     input_tracks = ''.join(f'[0:a:{i}]' for i in tracks)
     filter_complex = f"{input_tracks}amerge=inputs={len(tracks)}"
@@ -29,9 +29,13 @@ def merge_audio_tracks(input_video, tracks, output_audio):
         print("Error merging audio tracks:")
         print(result.stderr.decode())
 
-args = parseExtractDialogArgs()
+def extract_dialog(video_file_path, tracks):
+    basename, _ = os.path.splitext(video_file_path)
+    output_audio_file = os.path.join(f"{basename}_merged.wav")
+    _merge_audio_tracks(video_file_path, tracks, output_audio_file)
+    return output_audio_file
 
-directory = os.path.dirname(args.video_file_path)
-basename, _ = os.path.splitext(args.video_file_path)
-output_audio = os.path.join(f"{basename}_merged.wav")
-merge_audio_tracks(args.video_file_path, args.tracks, output_audio);
+
+if __name__ == "__main__":
+    args = parseExtractDialogArgs()
+    extract_dialog(args.video_file_path, args.tracks)
