@@ -43,7 +43,7 @@ def parse_srt(file_path):
         time_ranges.append((srt_id, start_time, end_time))
 
     # TODO merging may reduce the number of SRTs if the user has made modifications
-    return _merge(time_ranges)
+    return time_ranges
 
 def create_srt_entry(srt_id, start, end, text):
     return [srt_id, f"{seconds_to_srt_timestamp(start)} --> {seconds_to_srt_timestamp(end)}", text]
