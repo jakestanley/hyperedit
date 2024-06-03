@@ -14,7 +14,8 @@ def _do_transcribe(input_path, output_path):
     ]
 
     # Run the ffmpeg command
-    result = subprocess.run(vosk_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    with open('vosk-transcriber.log', 'w') as log:
+        result = subprocess.run(vosk_command, stdout=log, stderr=log)
 
     # Check if the command was successful
     if result.returncode == 0:
