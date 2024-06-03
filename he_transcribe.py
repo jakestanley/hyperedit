@@ -1,9 +1,10 @@
+#!/usr/bin/env python3
 import subprocess
 import os
 
 from py.args import parseTranscribeArgs
 
-def transcribe(input_path, output_path):
+def _do_transcribe(input_path, output_path):
     vosk_command = [
         'vosk-transcriber',
         '-i', input_path,
@@ -19,13 +20,19 @@ def transcribe(input_path, output_path):
     if result.returncode == 0:
         print("Generated SRT successfully")
     else:
-        print("Error generating SRT:")
-        print(result.stderr.decode())
+        raise("Error generating SRT:")
+        # print(result.stderr.decode())
 
-args = parseTranscribeArgs()
+def transcribe(audio_file_path=None):
 
-directory = os.path.dirname(args.audio_file_path)
-basename, _ = os.path.splitext(args.audio_file_path)
-output_path = f"{basename}.srt"
+    if audio_file_path is None:
+        raise Exception("Application error: 'audio_file_path' argument missing")
 
-transcribe(args.audio_file_path, output_path)
+    basename, _ = os.path.splitext(audio_file_path)
+    output_file_path = f"{basename}.srt"
+    _do_transcribe(audio_file_path, output_file_path)
+    return output_file_path
+
+if __name__ == "__main__":
+    args = parseTranscribeArgs()
+    transcribe(args.audio_file_path)

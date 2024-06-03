@@ -19,7 +19,7 @@ def _merge(time_ranges):
 def _format_entry(entry):
     return f"{entry[0]}\n{entry[1]}\n{entry[2]}"
 
-def deaggress(time_ranges, seconds=1):
+def deaggress_ranges_by_seconds(time_ranges, seconds=1):
     """Deaggress the subtitles by a given amount of seconds. End deaggression is halved so that we don't start running into the next clip and cut it off"""
     deaggregated_time_ranges = []
     for srt_id, start_seconds, end_seconds in time_ranges:

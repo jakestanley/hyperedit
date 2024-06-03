@@ -39,9 +39,9 @@ def _addRangeArgs(parser):
                         # description='Range of clips to render',
                         type=int, nargs='+')
 
-def _addDeaggressArgs(parser):
+def _addDeaggressArgs(parser, required):
     parser.add_argument("-d", "--deaggress-seconds", 
-                        required=True, 
+                        required=required,
                         type=float, 
                         help="add n seconds of padding around SRTs")
     
@@ -85,7 +85,7 @@ def parseDeaggressArgs():
 
     _addSrtPathArgs(parser)
     _addOverwriteArgs(parser)
-    _addDeaggressArgs(parser)
+    _addDeaggressArgs(parser, required=True)
 
     return parser.parse_args()
 
@@ -131,7 +131,7 @@ def parseBatchArgs():
     parser = argparse.ArgumentParser(description='Batch process hyperedit operations')
     _addVideoPathArgs(parser)
     _addTracksArgs(parser)
-    _addDeaggressArgs(parser)
+    _addDeaggressArgs(parser, required=False)
     _addOverwriteArgs(parser)
     _addPreviewArgs(parser)
     _addRangeArgs(parser)
