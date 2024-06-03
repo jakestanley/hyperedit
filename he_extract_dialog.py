@@ -12,6 +12,7 @@ def _merge_audio_tracks(input_video, tracks, output_audio):
     # Define the ffmpeg command
     ffmpeg_command = [
         'ffmpeg',
+        '-stats',
         '-y', # overwrites
         '-i', input_video,
         '-filter_complex', filter_complex,
@@ -21,7 +22,8 @@ def _merge_audio_tracks(input_video, tracks, output_audio):
     ]
     
     # Run the ffmpeg command
-    result = subprocess.run(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    with open('ffmpeg-audio.log', 'w') as log:
+        result = subprocess.run(ffmpeg_command, stdout=log, stderr=log)
     
     # Check if the command was successful
     if result.returncode == 0:

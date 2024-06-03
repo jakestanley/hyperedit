@@ -37,6 +37,7 @@ In rough priority order
 - Excludes file for ignoring selected SRTs
 - Improve performance some more
 - Software encoding support
+- analyse game audio for volume peaks and use this as weights
 
 ## Implementation
 

@@ -89,7 +89,7 @@ def _generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, previ
 
 def _run_ffmpeg_commands(commands, srt_ids):
     durations = []
-    with open('ffmpeg.log', 'w') as log: # TODO: split video should incorporate the source and any overrides
+    with open('ffmpeg-split.log', 'w') as log: # TODO: split video should incorporate the source and any overrides
         for i in range(len(commands)):
             print(f"Splitting clip {i+1} of {len(srt_ids)}... ", end='', flush=True)
             start_time = time.time()
@@ -124,7 +124,7 @@ def concatenate_clips(file_list, output_file, gpu):
         '-map', '0:v', '-map', '0:a',
         output_file
     ]
-    with open('ffmpeg.log', 'a') as log:
+    with open('ffmpeg-concat.log', 'w') as log:
         e = subprocess.run(cmd, stdout=log, stderr=log)
         if e.returncode != 0:
             raise(f"Error concatenating clips: ffmpeg returned exit code {e.returncode}")
