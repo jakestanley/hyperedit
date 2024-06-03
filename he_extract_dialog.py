@@ -40,6 +40,11 @@ def extract_dialog(video_file_path=None, tracks=None):
 
     basename, _ = os.path.splitext(video_file_path)
     output_audio_file = os.path.join(f"{basename}_merged.wav")
+
+    if os.path.exists(output_audio_file):
+        print(f"Audio file already exists at {output_audio_file}")
+        return output_audio_file
+
     _merge_audio_tracks(video_file_path, tracks, output_audio_file)
     return output_audio_file
 

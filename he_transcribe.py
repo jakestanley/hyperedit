@@ -30,6 +30,12 @@ def transcribe(audio_file_path=None):
 
     basename, _ = os.path.splitext(audio_file_path)
     output_file_path = f"{basename}.srt"
+
+    # TODO: option to overwrite
+    if os.path.exists(output_file_path):
+        print(f"SRT file already exists at {output_file_path}")
+        return output_file_path
+
     _do_transcribe(audio_file_path, output_file_path)
     return output_file_path
 

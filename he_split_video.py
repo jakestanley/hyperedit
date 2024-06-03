@@ -22,6 +22,8 @@ def _generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, previ
         formatted_start = seconds_to_output_timestamp(start)
         formatted_end = seconds_to_output_timestamp(end)
         seek_time = start - 2
+        if seek_time < 0:
+            seek_time = 0
         seek_offset = start - seek_time
         duration = end - start
 
