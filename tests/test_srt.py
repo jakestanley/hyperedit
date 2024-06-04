@@ -1,7 +1,7 @@
 import unittest
 
 from parameterized import parameterized
-from py.srt import seconds_to_srt_timestamp, deaggress
+from py.srt import seconds_to_srt_timestamp, deaggress_ranges_by_seconds
 
 class TestSrt(unittest.TestCase):
 
@@ -16,4 +16,4 @@ class TestSrt(unittest.TestCase):
         [[('1', 4.32, 6.605)], 0.5, [('1', 3.82, 7.105)]],
     ])
     def test_deaggress(self, input_time, input_seconds, expected):
-        self.assertEqual(deaggress(input_time, input_seconds), expected)
+        self.assertEqual(deaggress_ranges_by_seconds(input_time, input_seconds), expected)

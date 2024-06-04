@@ -5,29 +5,29 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "1_extract_dialog",
+            "name": "he_extract_dialog",
             "type": "debugpy",
             "request": "launch",
-            "program": "1_extract_dialog.py",
+            "program": "he_extract_dialog.py",
             "args": [
                 "-v", "data/2024-04-22 22-27-37.mkv",
                 "-t", "1", "3"
             ]
         },
         {
-            "name": "2_transcribe",
+            "name": "he_transcribe",
             "type": "debugpy",
             "request": "launch",
-            "program": "2_transcribe.py",
+            "program": "he_transcribe.py",
             "args": [
                 "-a", "data/2024-04-22 22-27-37_merged.wav"
             ]
         },
         {
-            "name": "deaggress",
+            "name": "he_deaggress",
             "type": "debugpy",
             "request": "launch",
-            "program": "deaggress.py",
+            "program": "he_deaggress.py",
             "args": [
                 "-S", "data/2024-04-22 22-27-37_merged.srt",
                 // deaggress by 1 second
@@ -35,10 +35,10 @@
             ]
         },
         {
-            "name": "3_srt_editor (preview, vlc)",
+            "name": "he_srt_editor (preview, vlc)",
             "type": "debugpy",
             "request": "launch",
-            "program": "3_srt_editor.py",
+            "program": "he_srt_editor.py",
             "args": [
                 "preview",
                 "--player", "vlc",
@@ -50,10 +50,10 @@
             ]
         },
         {
-            "name": "3_srt_editor (edit)",
+            "name": "he_srt_editor (edit)",
             "type": "debugpy",
             "request": "launch",
-            "program": "3_srt_editor.py",
+            "program": "he_srt_editor.py",
             "args": [
                 "edit",
                 "-i", "2",
@@ -63,10 +63,10 @@
             ]
         },
         {
-            "name": "3_srt_editor (remove)",
+            "name": "he_srt_editor (remove)",
             "type": "debugpy",
             "request": "launch",
-            "program": "3_srt_editor.py",
+            "program": "he_srt_editor.py",
             "args": [
                 "remove",
                 "-i", "2",
@@ -74,10 +74,10 @@
             ]
         },
         {
-            "name": "4_split_video (with nvidia, ranged)",
+            "name": "he_split_video (with nvidia, ranged)",
             "type": "debugpy",
             "request": "launch",
-            "program": "4_split_video.py",
+            "program": "he_split_video.py",
             "args": [
                 "-v", "data/2024-04-22 22-27-37.mkv",
                 "-S", "data/2024-04-22 22-27-37_merged.srt",
@@ -86,10 +86,10 @@
             ]
         },
         {
-            "name": "4_split_video (with preview, apple)",
+            "name": "he_split_video (with preview, apple)",
             "type": "debugpy",
             "request": "launch",
-            "program": "4_split_video.py",
+            "program": "he_split_video.py",
             "args": [
                 "-v", "data/2024-04-22 22-27-37.mkv",
                 "-S", "data/2024-04-22 22-27-37_merged.srt",
@@ -98,10 +98,10 @@
             ]
         },
         {
-            "name": "4_split_video (with preview, nvidia, ranged)",
+            "name": "he_split_video (with preview, nvidia, ranged)",
             "type": "debugpy",
             "request": "launch",
-            "program": "4_split_video.py",
+            "program": "he_split_video.py",
             "args": [
                 "-v", "data/2024-04-22 22-27-37.mkv",
                 "-S", "data/2024-04-22 22-27-37_merged.srt",
@@ -110,6 +110,24 @@
                 "--preview"
             ]
         },
+        {
+            "name": "he_batch  (apple, no deaggress)",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "he_batch.py",
+            "args": [
+                "--video-file-path", "data/2024-04-22 22-27-37.mkv", // -v
+                "--tracks", "1", "3",                                // -t
+                "--gpu", "apple",                                    // -g
+                "--range", "5", "8",                                 // -r
+                "--preview",
+                // TODO: overwrite needs more parameters. 
+                //  i.e overwrite final? overwrite merged audio? 
+                //  overwrite SRTs? etc etc
+                "--overwrite",
+                
+            ]
+        }
         {
             "name": "Debug tests",
             "type": "debugpy",

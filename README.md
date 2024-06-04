@@ -6,6 +6,15 @@ Removes silences from your videos.
 
 You've recorded some footage with multiple audio tracks but there's a lot of silence and you want to speed up the editing process
 
+Because mplayer and vlc will only play one audio stream unless you want to preview all your files in Resolve, I strongly recommend a setup like:
+
+- Track 0: Game audio and all voice
+- Track 1: Game audio
+- Track 2: Your voice
+- Track 3: Other voice
+
+With this setup, you can use the `--tracks` argument as such: `--tracks 2 3` and then you can just remove the all audio track in post.
+
 ## Requirements
 
 - vosk-transcriber
@@ -29,14 +38,11 @@ You've recorded some footage with multiple audio tracks but there's a lot of sil
 
 In rough priority order
 
-- SRT overrides actually used
-    - this may cause problems however if manual editing process has already started. you may need to remove the old ones and re-insert
-- SRT overrides may need to be "baked" into the file
 - Higher quality rendering options
 - Batch mode, i.e point at a folder with an options file and just run it
-- Excludes file for ignoring selected SRTs
 - Improve performance some more
 - Software encoding support
+- analyse game audio for volume peaks and use this as weights
 
 ## Implementation
 

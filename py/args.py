@@ -21,29 +21,51 @@ def _addVideoPathArgs(parser):
     
 def _addPlayerArgs(parser):
     parser.add_argument('-p', '--player', type=str, 
-                    default='mplayer'
-                    )
+                        default='mplayer'
+                        )
     
 def _addSrtIdArgs(parser):
     parser.add_argument('-i', '--srt-id', type=int, 
-                required=True, 
-                # default=1
-                )
+                        required=True)
+    
+def _addPreviewArgs(parser):
+    parser.add_argument("--preview", 
+                        action='store_true', 
+                        help="Overlay SRT and timestamps onto clips and used fast preset")
+
+def _addRangeArgs(parser):
+    parser.add_argument("-r", "--range",
+                        required=False, 
+                        # description='Range of clips to render',
+                        type=int, nargs='+')
+
+def _addDeaggressArgs(parser, required):
+    parser.add_argument("-d", "--deaggress-seconds", 
+                        required=required,
+                        type=float, 
+                        help="add n seconds of padding around SRTs")
     
 def _addStartEndOffsetArgs(parser):
     parser.add_argument('-s', '--start-offset', type=float, default=0.0)
     parser.add_argument('-e', '--end-offset',   type=float, default=0.0)
 
+def _addTracksArgs(parser):
+    parser.add_argument('-t', '--tracks',           
+                        required=True, 
+                        # description='Track numbers (zero indexed) that contain voice only',
+                        type=int, nargs='+')
+    
+def _addGpuArgs(parser):
+    parser.add_argument("-g", "--gpu", 
+                        type=str, 
+                        required=True, 
+                        help="e.g apple or nvidia")
 
 def parseExtractDialogArgs():
     parser = argparse.ArgumentParser()
 
     _addVideoPathArgs(parser)
-    
-    parser.add_argument('-t', '--tracks',           
-                        required=True, 
-                        # description='Track numbers (zero indexed) that contain voice only',
-                        type=int, nargs='+')
+    _addTracksArgs(parser)
 
     return parser.parse_args()
 
@@ -63,7 +85,7 @@ def parseDeaggressArgs():
 
     _addSrtPathArgs(parser)
     _addOverwriteArgs(parser)
-    parser.add_argument("-d", "--deaggress-seconds", required=True, type=float, help="add n seconds of padding around SRTs")
+    _addDeaggressArgs(parser, required=True)
 
     return parser.parse_args()
 
@@ -99,11 +121,20 @@ def parseSplitVideoArgs():
     _addVideoPathArgs(parser)
     _addSrtPathArgs(parser)
     _addOverwriteArgs(parser)
-    parser.add_argument("-g", "--gpu", type=str, required=True, help="e.g apple or nvidia")
-    parser.add_argument("--preview", action='store_true', help="Overlay SRT and timestamps onto clips and used fast preset")
-    parser.add_argument("-r", "--range",
-                        required=False, 
-                        # description='Range of clips to render',
-                        type=int, nargs='+')
+    _addGpuArgs(parser)
+    _addPreviewArgs(parser)
+    _addRangeArgs(parser)
+
+    return parser.parse_args()
+
+def parseBatchArgs():
+    parser = argparse.ArgumentParser(description='Batch process hyperedit operations')
+    _addVideoPathArgs(parser)
+    _addTracksArgs(parser)
+    _addDeaggressArgs(parser, required=False)
+    _addOverwriteArgs(parser)
+    _addPreviewArgs(parser)
+    _addRangeArgs(parser)
+    _addGpuArgs(parser)
 
     return parser.parse_args()
