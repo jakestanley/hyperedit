@@ -1,3 +1,4 @@
 __pycache__
 data
-file_list*.txt
+*.txt
+*.mp4

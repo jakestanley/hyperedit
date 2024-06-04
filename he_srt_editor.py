@@ -66,7 +66,7 @@ if args.command == "edit" or args.command == "remove":
     merged_srts = merge(srts)
     formatted_srts = []
     # srt_id = 1
-    for srt_id, start, end in merge(srts):
+    for srt_id, start, end in merged_srts:
         formatted_srts.append(create_srt_entry(srt_id=srt_id, start=start, end=end))
         # NOTE: avoiding doing this. reindexing SRTs is done in deaggress but 
         #   here it would result in loads of SRTs needing to be re-rendered
@@ -84,6 +84,8 @@ elif args.command == "preview":
             '--start-time', f'{start}',
             '--stop-time', f'{start + duration}'
         ]
+    # TODO: fix mplayer seek time being off
+    # recommend VLC as mplayer seek time is off
     elif args.player == 'mplayer':
         command = [
             'mplayer',
