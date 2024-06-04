@@ -41,7 +41,8 @@ if len(srts) == 0:
     raise Exception("SRT file is empty")
 
 try:
-    srt = srts[srt_id - 1]
+    # user types 1, but python indexes from 0
+    srt = srts[srt_id - 1] # there's a bug here where it's doing the wrong one. the wrong ID might be getting set elsewhere # TODO fix
 except IndexError:
     raise Exception(f"SRT ID {srt_id} is not in the provded SRT file")
 
@@ -93,9 +94,9 @@ elif args.command == "preview":
     else:
         raise Exception(f"Unsupported player {args.player}")
 
-    print(f"Playing SRT {srt_id} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
+    print(f"Playing SRT {srt[0]} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
     subprocess.run(command)
-    print(f"Played SRT {srt_id} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
+    print(f"Played SRT {srt[0]} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
 
 
 

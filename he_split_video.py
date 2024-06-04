@@ -8,6 +8,8 @@ from py.srt import parse_srt, seconds_to_srt_timestamp
 from py.ffmpeg import get_params_for_gpu, seconds_to_ffmpeg_timestamp as stff
 from py.time import seconds_to_output_timestamp, seconds_to_time_remaining
 
+from he_concatenate import create_file_list, concatenate_clips
+
 def _escape_text(text):
     return text.replace(":", r'\:').replace(",", r'\,').replace("'", r"\'")
 
@@ -101,33 +103,6 @@ def _run_ffmpeg_commands(commands, srt_ids):
             durations.append(duration)
             print(f" {duration:.1f} seconds. Rolling average: {sum(durations)/len(durations):.1f} seconds. ETA: {seconds_to_time_remaining((sum(durations)/len(durations))*(len(commands)-i))}\r", end='', flush=True)
     return durations
-
-def create_file_list(output_files, list_filename):
-    with open(list_filename, 'w') as file:
-        for output_file in output_files:
-            file.write(f"file '{output_file}'\n")
-
-# TODO separate script for concatenate
-def concatenate_clips(file_list, output_file, gpu):
-
-    gpu_params = get_params_for_gpu(gpu)
-
-    cmd = [
-        'ffmpeg', 
-        '-y', 
-        '-f', 'concat', 
-        '-safe', '0', 
-        '-i', file_list, 
-        '-c:v', gpu_params['encoder'],
-        '-b:v', '5M',
-        # Map all video and audio streams
-        '-map', '0:v', '-map', '0:a',
-        output_file
-    ]
-    with open('ffmpeg-concat.log', 'w') as log:
-        e = subprocess.run(cmd, stdout=log, stderr=log)
-        if e.returncode != 0:
-            raise(f"Error concatenating clips: ffmpeg returned exit code {e.returncode}")
 
 def split_video(
         srt_file_path=None, 
