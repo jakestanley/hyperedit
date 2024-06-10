@@ -5,6 +5,26 @@ import shutil
 
 from hyperedit.time import seconds_to_hmsm
 
+def replace_or_add_srt_entry(srt_entries, srt_id, new_start, new_end, new_text):
+    entry_found = False
+    for i in range(len(srt_entries)):
+        entry = srt_entries[i]
+        if int(entry[0]) == srt_id:
+            srt_entries[i] = [srt_id, new_start, new_end]
+            entry_found = True
+            break
+    
+    if not entry_found:
+        new_entry = create_srt_entry(srt_id, new_start, new_end, new_text)
+        srt_entries.append(new_entry)
+        srt_entries.sort(key=lambda e: e[0])
+
+def remove_srt_entry(srt_entries, srt_id):
+    for entry in srt_entries:
+        if int(entry[0]) == srt_id:
+            srt_entries.remove(entry)
+            break
+
 def merge(time_ranges):
     """Merge overlapping subtitles."""
     merged_time_ranges = []
