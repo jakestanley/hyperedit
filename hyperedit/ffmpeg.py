@@ -1,4 +1,4 @@
-from py.time import seconds_to_hmsm
+from hyperedit.time import seconds_to_hmsm
 
 def get_params_for_gpu(gpu):
     if str.lower(gpu) == 'apple':

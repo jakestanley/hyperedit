@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from scripts.args import parseDeaggressArgs
 
 from hyperedit.deaggress import deaggress

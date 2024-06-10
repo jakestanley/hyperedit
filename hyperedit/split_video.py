@@ -1,14 +1,11 @@
-#!/usr/bin/env python3
 import subprocess
 import os
 import time
 
-from py.args import parseSplitVideoArgs
-from py.srt import parse_srt, seconds_to_srt_timestamp
-from py.ffmpeg import get_params_for_gpu, seconds_to_ffmpeg_timestamp as stff
-from py.time import seconds_to_output_timestamp, seconds_to_time_remaining
-
-from he_concatenate import create_file_list, concatenate_clips
+from hyperedit.srt import parse_srt, seconds_to_srt_timestamp
+from hyperedit.ffmpeg import get_params_for_gpu, seconds_to_ffmpeg_timestamp as stff
+from hyperedit.time import seconds_to_output_timestamp, seconds_to_time_remaining
+from hyperedit.concatenate import create_file_list, concatenate_clips
 
 def _escape_text(text):
     return text.replace(":", r'\:').replace(",", r'\,').replace("'", r"\'")
@@ -163,13 +160,3 @@ def split_video(
     print("Final video has been successfully generated.")
 
     return final_output
-
-if __name__ == "__main__":
-
-    args = parseSplitVideoArgs()
-    split_video(srt_file_path=args.srt_file_path, 
-                video_file_path=args.video_file_path, 
-                preview=args.preview, 
-                range=args.range,
-                overwrite=args.overwrite,
-                gpu=args.gpu)

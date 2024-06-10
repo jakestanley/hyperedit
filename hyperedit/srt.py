@@ -3,7 +3,7 @@ import os
 import time
 import shutil
 
-from py.time import seconds_to_hmsm
+from hyperedit.time import seconds_to_hmsm
 
 def merge(time_ranges):
     """Merge overlapping subtitles."""
