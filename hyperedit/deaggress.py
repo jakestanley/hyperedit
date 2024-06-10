@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os
 
-from py.srt import parse_srt, deaggress_ranges_by_seconds, write_srt, create_srt_entry
+from hyperedit.srt import parse_srt, deaggress_ranges_by_seconds, write_srt, create_srt_entry
 
 def deaggress(
         srt_file_path=None,
