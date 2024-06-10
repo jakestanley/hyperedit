@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import subprocess
 import argparse
-from py.ffmpeg import get_params_for_gpu
+from hyperedit.ffmpeg import get_params_for_gpu
 
 def create_file_list(output_files, list_filename):
     with open(list_filename, 'w') as file:

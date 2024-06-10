@@ -1,8 +1,5 @@
-#!/usr/bin/env python3
 import subprocess
 import os
-
-from py.args import parseTranscribeArgs
 
 def _do_transcribe(input_path, output_path):
     vosk_command = [
@@ -39,7 +36,3 @@ def transcribe(audio_file_path=None):
 
     _do_transcribe(audio_file_path, output_file_path)
     return output_file_path
-
-if __name__ == "__main__":
-    args = parseTranscribeArgs()
-    transcribe(args.audio_file_path)

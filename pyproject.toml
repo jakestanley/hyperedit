@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "hyperedit"
-version = "0.1.0"
+version = "1.4.0"
 description = "Supercut your videos"
 authors = ["Jake Stanley <prudentia713@gmail.com>"]
 readme = "README.md"
@@ -8,8 +8,17 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
 
+[tool.poetry.scripts]
+deaggress = "scripts.deaggress:main"
+split_video = "scripts.split_video:main"
+transcribe = "scripts.transcribe:main"
+srt_editor = "scripts.srt_editor:main"
+extract_dialog = "scripts.extract_dialog:main"
+batch = "scripts.batch:main"
+
 [tool.poetry.group.dev.dependencies]
 parameterized = "^0.9.0"
+pytest = "^8.2.2"
 
 [build-system]
 requires = ["poetry-core"]
