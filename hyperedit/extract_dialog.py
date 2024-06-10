@@ -2,8 +2,6 @@
 import subprocess
 import os
 
-from py.args import parseExtractDialogArgs
-
 def _merge_audio_tracks(input_video, tracks, output_audio):
     # Construct the filter_complex string based on the provided track indices
     input_tracks = ''.join(f'[0:a:{i}]' for i in tracks)
@@ -49,7 +47,3 @@ def extract_dialog(video_file_path=None, tracks=None):
 
     _merge_audio_tracks(video_file_path, tracks, output_audio_file)
     return output_audio_file
-
-if __name__ == "__main__":
-    args = parseExtractDialogArgs()
-    extract_dialog(args.video_file_path, args.tracks)
