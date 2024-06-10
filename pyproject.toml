@@ -6,7 +6,7 @@ authors = ["Jake Stanley <prudentia713@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
+python = ">=3.9,<3.13"
 
 [tool.poetry.group.dev.dependencies]
 parameterized = "^0.9.0"

@@ -16,5 +16,5 @@ dev = ["jinja2"]
 
 [metadata]
 lock-version = "2.0"
-python-versions = "^3.12"
-content-hash = "4eb9b11ca2e587f3bab3e13221311adb586a9adb9aa4e3530490090b62afa116"
+python-versions = ">=3.9,<3.13"
+content-hash = "5e63ada8ee43812d6477bee31dddb17c711fcdf938aa638ad186e9b379ec6c5d"
