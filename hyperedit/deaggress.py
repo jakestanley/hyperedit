@@ -2,7 +2,6 @@
 import os
 
 from py.srt import parse_srt, deaggress_ranges_by_seconds, write_srt, create_srt_entry
-from py.args import parseDeaggressArgs
 
 def deaggress(
         srt_file_path=None,
@@ -37,12 +36,3 @@ def deaggress(
 
     write_srt(output_path, srt_entries)
     return output_path
-
-if __name__ == '__main__':
-    args = parseDeaggressArgs()
-
-    deaggress(
-        srt_file_path=args.srt_file_path,
-        deaggress_seconds=args.deaggress_seconds,
-        overwrite=args.overwrite
-        )
