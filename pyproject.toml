@@ -1,12 +1,13 @@
 [tool.poetry]
 name = "hyperedit"
-version = "1.4.0"
+version = "1.5.0"
 description = "Supercut your videos"
 authors = ["Jake Stanley <prudentia713@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = ">=3.9,<3.13"
+ffprobe-python = "^1.0.3"
 
 [tool.poetry.scripts]
 deaggress = "scripts.deaggress:main"

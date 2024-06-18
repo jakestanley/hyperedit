@@ -2,6 +2,8 @@
 import subprocess
 import os
 
+from ffprobe import FFProbe
+
 def _merge_audio_tracks(input_video, tracks, output_audio):
     # Construct the filter_complex string based on the provided track indices
     input_tracks = ''.join(f'[0:a:{i}]' for i in tracks)
@@ -29,6 +31,18 @@ def _merge_audio_tracks(input_video, tracks, output_audio):
     else:
         print("Error merging audio tracks:")
         print(result.stderr.decode())
+
+def get_audio_tracks(video_file):
+    metadata=FFProbe(video_file)
+
+    audio_streams = []
+
+    for stream in metadata.streams:
+        if stream.is_audio():
+            print(f"Audio track found: {stream.index}")
+            audio_streams.append(stream)
+
+    return audio_streams
 
 def extract_dialog(video_file_path=None, tracks=None):
 
