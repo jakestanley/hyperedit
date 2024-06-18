@@ -33,7 +33,7 @@ def _merge_audio_tracks(input_video, tracks, output_audio):
         print(result.stderr.decode())
 
 def get_audio_tracks(video_file):
-    metadata=FFProbe('test-media-file.mov')
+    metadata=FFProbe(video_file)
 
     audio_streams = []
 
