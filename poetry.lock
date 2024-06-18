@@ -26,6 +26,17 @@ files = [
 test = ["pytest (>=6)"]
 
 [[package]]
+name = "ffprobe-python"
+version = "1.0.3"
+description = " A wrapper around ffprobe command to extract metadata from media files."
+optional = false
+python-versions = "*"
+files = [
+    {file = "ffprobe-python-1.0.3.tar.gz", hash = "sha256:b1d3e69e65e0814e28575f63a47b836a0b7cc8f1ffedd62d27152d9e4488214a"},
+    {file = "ffprobe_python-1.0.3-py3-none-any.whl", hash = "sha256:b02576228f6da0b0bb973e15e5dadb132013a4ded202dabb89ac77779e9634d6"},
+]
+
+[[package]]
 name = "iniconfig"
 version = "2.0.0"
 description = "brain-dead simple config-ini parsing"
@@ -112,4 +123,4 @@ files = [
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9,<3.13"
-content-hash = "e8ee623cdd35845dae87abf18043d34c09cdab99c135b55d407b98c40f56fb29"
+content-hash = "604ad41c973948d8499eb5b45f0eddec2b3e385ff424bfb76bd20a8467a42a87"

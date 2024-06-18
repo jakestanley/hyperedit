@@ -2,6 +2,8 @@
 import subprocess
 import os
 
+from ffprobe import FFProbe
+
 def _merge_audio_tracks(input_video, tracks, output_audio):
     # Construct the filter_complex string based on the provided track indices
     input_tracks = ''.join(f'[0:a:{i}]' for i in tracks)
@@ -30,27 +32,17 @@ def _merge_audio_tracks(input_video, tracks, output_audio):
         print("Error merging audio tracks:")
         print(result.stderr.decode())
 
-def get_audio_tracks(video_file_path):
-    # Define the ffmpeg command to show the available audio tracks
-    ffmpeg_command = [
-        'ffmpeg',
-        '-stats',
-        '-i', video_file_path,
-        '-q', '0'
-    ]
+def get_audio_tracks(video_file):
+    metadata=FFProbe('test-media-file.mov')
 
-    # Run the ffmpeg command and capture the output
-    result = subprocess.run(ffmpeg_command, capture_output=True, text=True)
+    audio_streams = []
 
-    # Parse the output to get the available audio track indices
-    audio_tracks = []
-    for line in result.stdout.splitlines():
-        if line.startswith('    Stream #'):
-            track_info = line.split(':')[2].strip().split(' ')
-            if track_info[0] == 'Audio':
-                audio_tracks.append(int(track_info[1]))
+    for stream in metadata.streams:
+        if stream.is_audio():
+            print(f"Audio track found: {stream.index}")
+            audio_streams.append(stream)
 
-    return audio_tracks
+    return audio_streams
 
 def extract_dialog(video_file_path=None, tracks=None):
 
