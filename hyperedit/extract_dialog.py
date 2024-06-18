@@ -30,6 +30,28 @@ def _merge_audio_tracks(input_video, tracks, output_audio):
         print("Error merging audio tracks:")
         print(result.stderr.decode())
 
+def get_audio_tracks(video_file_path):
+    # Define the ffmpeg command to show the available audio tracks
+    ffmpeg_command = [
+        'ffmpeg',
+        '-stats',
+        '-i', video_file_path,
+        '-q', '0'
+    ]
+
+    # Run the ffmpeg command and capture the output
+    result = subprocess.run(ffmpeg_command, capture_output=True, text=True)
+
+    # Parse the output to get the available audio track indices
+    audio_tracks = []
+    for line in result.stdout.splitlines():
+        if line.startswith('    Stream #'):
+            track_info = line.split(':')[2].strip().split(' ')
+            if track_info[0] == 'Audio':
+                audio_tracks.append(int(track_info[1]))
+
+    return audio_tracks
+
 def extract_dialog(video_file_path=None, tracks=None):
 
     if video_file_path is None:
