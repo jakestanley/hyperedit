@@ -3,7 +3,7 @@ import subprocess
 import os
 
 from scripts.args import parseSrtEditorArgs
-from hyperedit.srt import parse_srt, write_srt, create_srt_entry, merge, backup_srt, replace_or_add_srt_entry, remove_srt_entry
+from hyperedit.srt import parse_srt, write_srt, create_srt_entry, merge, backup_srt, replace_or_add_srt_entry, remove_srt_entry, PreviewSrt
 
 def main():
 
@@ -59,34 +59,4 @@ def main():
     elif args.command == "remove":
         raise("Not yet implemented")
     elif args.command == "preview":
-        if args.player == 'vlc':
-            command = [
-                'vlc',
-                args.video_file_path,
-                '--start-time', f'{start}',
-                '--stop-time', f'{start + duration}'
-            ]
-        # TODO: fix mplayer seek time being off
-        # recommend VLC as mplayer seek time is off
-        elif args.player == 'mplayer':
-            command = [
-                'mplayer',
-                '-ss', f'{start}',
-                '-endpos', f'{duration}',
-                args.video_file_path
-            ]
-        else:
-            raise Exception(f"Unsupported player {args.player}")
-
-        print(f"Playing SRT {srt[0]} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
-        subprocess.run(command)
-        print(f"Played SRT {srt[0]} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
-
-
-
-
-
-
-
-
-
+        PreviewSrt(args.video_file_path, srt, start_offset, end_offset, args.player)

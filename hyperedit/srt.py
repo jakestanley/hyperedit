@@ -2,8 +2,37 @@ import re
 import os
 import time
 import shutil
+import subprocess
 
 from hyperedit.time import seconds_to_hmsm
+
+def PreviewSrt(video_path, srt, start_offset, end_offset, player='vlc'):
+
+    start = srt[1] - start_offset
+    end = srt[2] + end_offset
+    duration = end - start
+
+    if player == 'vlc':
+        command = [
+            'vlc',
+            video_path,
+            '--start-time', f'{start}',
+            '--stop-time', f'{start + duration}'
+        ]
+    elif player == 'mplayer':
+        command = [
+            'mplayer',
+            '-ss', f'{start}',
+            '-endpos', f'{duration}',
+            video_path
+        ]
+    else:
+        raise Exception(f"Unsupported player {player}")
+
+
+    print(f"Playing SRT {srt[0]} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
+    subprocess.run(command)
+    print(f"Played SRT {srt[0]} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
 
 def replace_or_add_srt_entry(srt_entries, srt_id, new_start, new_end, new_text):
     entry_found = False
