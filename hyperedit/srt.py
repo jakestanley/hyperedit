@@ -6,7 +6,7 @@ import subprocess
 
 from hyperedit.time import seconds_to_hmsm
 
-def PreviewSrt(video_path, srt, start_offset, end_offset, player='vlc'):
+def PreviewSrt(video_path, srt, start_offset=0, end_offset=0, player='vlc'):
 
     start = srt[1] - start_offset
     end = srt[2] + end_offset
