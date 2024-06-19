@@ -44,7 +44,7 @@ def get_audio_tracks(video_file):
 
     return audio_streams
 
-def extract_dialog(video_file_path=None, tracks=None):
+def extract_dialog(video_file_path=None, tracks=None, to_file=None):
 
     if video_file_path is None:
         raise Exception("Application error: 'video_file_path' argument missing")
@@ -52,8 +52,11 @@ def extract_dialog(video_file_path=None, tracks=None):
     if tracks is None:
         raise Exception("Application error: 'tracks' argument missing")
 
-    basename, _ = os.path.splitext(video_file_path)
-    output_audio_file = os.path.join(f"{basename}_merged.wav")
+    if to_file:
+        output_audio_file = to_file
+    else:
+        basename, _ = os.path.splitext(video_file_path)
+        output_audio_file = os.path.join(f"{basename}_merged.wav")
 
     if os.path.exists(output_audio_file):
         print(f"Audio file already exists at {output_audio_file}")
