@@ -6,7 +6,8 @@ from hyperedit.srt import parse_srt, deaggress_ranges_by_seconds, write_srt, cre
 def deaggress(
         srt_file_path=None,
         deaggress_seconds=1,
-        overwrite=False):
+        overwrite=False,
+        output_path = None):
 
     if not srt_file_path:
         raise Exception("SRT file path is required")
@@ -15,7 +16,8 @@ def deaggress(
         raise(f"File {srt_file_path} does not exist")
 
     basename, _ = os.path.splitext(srt_file_path)
-    output_path = f"{basename}_deaggressed_{deaggress_seconds}.srt"
+    if not output_path:
+        output_path = f"{basename}_deaggressed_{deaggress_seconds}.srt"
 
     if os.path.exists(output_path) and not overwrite:
         raise Exception(f"Deaggressed SRT by {deaggress_seconds} already exists at {output_path}")
