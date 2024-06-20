@@ -59,6 +59,7 @@ def merge(time_ranges):
     merged_time_ranges = []
     for srt_id, start_time, end_time in time_ranges:
         merged = False
+        # TODO merge text, it may be useful
         for i, (merged_srt_id, merged_start_time, merged_end_time) in enumerate(merged_time_ranges):
             if start_time <= merged_end_time:
                 merged_time_ranges[i] = (merged_srt_id, min(start_time, merged_start_time), max(end_time, merged_end_time))
@@ -88,7 +89,7 @@ def parse_srt(file_path):
     with open(file_path, 'r') as file:
         content = file.read()
     
-    pattern = re.compile(r'(\d+)\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})\n')
+    pattern = re.compile(r'(\d+)\n(\d{2}:\d{2}:\d{2},\d{3}) --> (\d{2}:\d{2}:\d{2},\d{3})\n(.*)')
     matches = pattern.findall(content)
     
     time_ranges = []
@@ -96,7 +97,8 @@ def parse_srt(file_path):
         srt_id = match[0]
         start_time = srt_timestamp_to_seconds(match[1])
         end_time = srt_timestamp_to_seconds(match[2])
-        time_ranges.append((srt_id, start_time, end_time))
+        text = match[3]
+        time_ranges.append((srt_id, start_time, end_time, text))
 
     # TODO merging may reduce the number of SRTs if the user has made modifications
     return time_ranges

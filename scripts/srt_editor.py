@@ -35,10 +35,7 @@ def main():
         start = srt[1] - start_offset
         end = srt[2] + end_offset
 
-        duration = end - start
-
     if args.command == "edit" or args.command == "remove":
-        basename, _ = os.path.splitext(srt_file_path)
 
         if args.command == "edit":
             replace_or_add_srt_entry(srts, srt_id, start, end, 'text unused')
@@ -60,3 +57,6 @@ def main():
         raise("Not yet implemented")
     elif args.command == "preview":
         PreviewSrt(args.video_file_path, srt, start_offset, end_offset, args.player)
+
+if __name__ == "__main__":
+    main()
