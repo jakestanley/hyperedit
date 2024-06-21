@@ -57,16 +57,16 @@ def remove_srt_entry(srt_entries, srt_id):
 def merge(time_ranges):
     """Merge overlapping subtitles."""
     merged_time_ranges = []
-    for srt_id, start_time, end_time in time_ranges:
+    for srt_id, start_time, end_time, text in time_ranges:
         merged = False
-        # TODO merge text, it may be useful
-        for i, (merged_srt_id, merged_start_time, merged_end_time) in enumerate(merged_time_ranges):
+        for i, (merged_srt_id, merged_start_time, merged_end_time, text) in enumerate(merged_time_ranges):
             if start_time <= merged_end_time:
-                merged_time_ranges[i] = (merged_srt_id, min(start_time, merged_start_time), max(end_time, merged_end_time))
+                # TODO merge text, it may be useful
+                merged_time_ranges[i] = (merged_srt_id, min(start_time, merged_start_time), max(end_time, merged_end_time), text)
                 merged = True
                 break
         if not merged:
-            merged_time_ranges.append((srt_id, start_time, end_time))
+            merged_time_ranges.append((srt_id, start_time, end_time, text))
     return merged_time_ranges
 
 def _format_entry(entry):
@@ -75,10 +75,10 @@ def _format_entry(entry):
 def deaggress_ranges_by_seconds(time_ranges, seconds=1):
     """Deaggress the subtitles by a given amount of seconds. End deaggression is halved so that we don't start running into the next clip and cut it off"""
     deaggregated_time_ranges = []
-    for srt_id, start_seconds, end_seconds in time_ranges:
+    for srt_id, start_seconds, end_seconds, text in time_ranges:
         deaggregated_start_time = start_seconds - seconds
         deaggregated_end_time = end_seconds + (seconds / 2)
-        deaggregated_time_ranges.append((srt_id, deaggregated_start_time, deaggregated_end_time))
+        deaggregated_time_ranges.append((srt_id, deaggregated_start_time, deaggregated_end_time, text))
     return merge(deaggregated_time_ranges) # TODO: potential bug: merge might not be respecting start/end times of deaggressed clips
 
 def parse_srt(file_path):

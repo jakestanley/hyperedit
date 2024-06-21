@@ -11,3 +11,6 @@ def main():
         deaggress_seconds=args.deaggress_seconds,
         overwrite=args.overwrite
         )
+
+if __name__ == "__main__":
+    main()
