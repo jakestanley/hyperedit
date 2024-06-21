@@ -13,8 +13,13 @@ class TestSrt(unittest.TestCase):
         self.assertEqual(seconds_to_srt_timestamp(input), expected)
 
     @parameterized.expand([
-        [[('1', 4.32, 6.605)], 0.5, 
-         [('1', 3.82, 6.855)]],
+        [
+            [('1', 4.32, 6.605, 'text1')], 0.5, 
+            [('1', 3.82, 6.855)]
+        ], [
+            [('1', 0.33, 2.9370000000000003, 'bomb bomb bomb bomb bomb bomb bomb'), ('2', 3.068, 5.49, 'bomb bomb bomb bomb bomb bomb bomb')], 30.0,
+            [('1', 0.0, 20.49)]
+        ]
     ])
     def test_deaggress(self, input_time, input_seconds, expected):
         # end seconds is always halved input seconds so it doesn't overlap with next
@@ -24,3 +29,6 @@ class TestSrt(unittest.TestCase):
         # assert start and end times (floats)
         self.assertAlmostEqual(actual[0][1], expected[0][1])
         self.assertAlmostEqual(actual[0][2], expected[0][2])
+
+if __name__ == '__main__':
+    unittest.main()

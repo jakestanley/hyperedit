@@ -77,6 +77,8 @@ def deaggress_ranges_by_seconds(time_ranges, seconds=1):
     deaggregated_time_ranges = []
     for srt_id, start_seconds, end_seconds, text in time_ranges:
         deaggregated_start_time = start_seconds - seconds
+        if deaggregated_start_time < 0:
+            deaggregated_start_time = 0
         deaggregated_end_time = end_seconds + (seconds / 2)
         deaggregated_time_ranges.append((srt_id, deaggregated_start_time, deaggregated_end_time, text))
     return merge(deaggregated_time_ranges) # TODO: potential bug: merge might not be respecting start/end times of deaggressed clips
