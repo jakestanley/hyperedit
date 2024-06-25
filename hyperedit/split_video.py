@@ -107,7 +107,8 @@ def split_video(
         preview=False,
         overwrite=False,
         range=None,
-        gpu=None
+        gpu=None,
+        output_directory=None
         ):
     
     if srt_file_path is None:
@@ -122,6 +123,9 @@ def split_video(
         output_prefix = f"{os.path.splitext(video_file_path)[0]}_preview"
     else:
         output_prefix, _ = os.path.splitext(video_file_path)
+
+    if output_directory:
+        output_prefix = os.path.join(output_directory, output_prefix)
 
     # TODO use args to generate this instead of just using a timestamp
     list_filename = f'file_list_{int(time.time())}.txt'
