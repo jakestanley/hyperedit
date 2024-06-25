@@ -3,6 +3,7 @@ import os
 import time
 import shutil
 import subprocess
+import hashlib
 
 from hyperedit.time import seconds_to_hmsm
 
@@ -33,6 +34,21 @@ def PreviewSrt(video_path, srt, start_offset=0, end_offset=0, player='vlc'):
     print(f"Playing SRT {srt[0]} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
     subprocess.run(command)
     print(f"Played SRT {srt[0]} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
+
+def GetPrimitiveSrtListHash(srts):
+    byte_array = bytearray()
+    for srt in srts:
+        byte_array.extend(int(srt[0]).to_bytes(4, byteorder='big', signed=True))
+
+        # Create a new hash object (default is sha256, but you can use others like 'sha512', 'sha1', etc.)
+        hasher = getattr(hashlib, 'sha256')()
+        hasher.update(byte_array)
+
+    # TODO add a extra numbers for length and a few other properties so we don't generate colliding hashes for lists of same size
+    #hasher.update
+    
+    # Return the hexadecimal (base16) representation of the digest
+    return hasher.hexdigest()[:8]
 
 def replace_or_add_srt_entry(srt_entries, srt_id, new_start, new_end, new_text):
     entry_found = False
