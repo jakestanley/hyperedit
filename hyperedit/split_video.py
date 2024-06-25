@@ -119,13 +119,18 @@ def split_video(
     
     # TODO test required args are present or raise exception
 
-    if preview:
-        output_prefix = f"{os.path.splitext(video_file_path)[0]}_preview"
+    if not output_directory:
+    # if output directory not provided, put the clips in the same directory as the source video file
+        if preview:
+            output_prefix = f"{os.path.splitext(video_file_path)[0]}_preview"
+        else:
+            output_prefix, _ = os.path.splitext(video_file_path)
     else:
-        output_prefix, _ = os.path.splitext(video_file_path)
-
-    if output_directory:
-        output_prefix = os.path.join(output_directory, output_prefix)
+    # if output directory is provided, put the clips in the provided directory
+        if preview:
+            output_prefix = os.path.join(output_directory, "preview")
+        else:
+            output_prefix = output_directory
 
     # TODO use args to generate this instead of just using a timestamp
     list_filename = f'file_list_{int(time.time())}.txt'
