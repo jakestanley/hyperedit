@@ -17,7 +17,7 @@ def _generate_ffmpeg_commands(video_file, time_ranges, output_prefix, gpu, previ
     commands = []
     output_files = []
     srt_ids = []
-    for srt_id, start, end in time_ranges:
+    for srt_id, start, end, _ in time_ranges:
         formatted_start = seconds_to_output_timestamp(start)
         formatted_end = seconds_to_output_timestamp(end)
         seek_time = start - 2
