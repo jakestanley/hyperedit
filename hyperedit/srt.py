@@ -36,6 +36,11 @@ def PreviewSrt(video_path, srt, start_offset=0, end_offset=0, player='vlc'):
     print(f"Played SRT {srt[0]} at range {srt[1]} - {srt[2]} (offsets -{start_offset},{end_offset})")
 
 def GetPrimitiveSrtListHash(srts):
+
+    # TODO proper handling for if srts empty
+    if len(srts) == 0:
+        return "00000000"
+
     byte_array = bytearray()
     for srt in srts:
         byte_array.extend(int(srt[0]).to_bytes(4, byteorder='big', signed=True))
