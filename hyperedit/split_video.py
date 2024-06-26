@@ -2,7 +2,7 @@ import subprocess
 import os
 import time
 
-from hyperedit.srt import parse_srt, seconds_to_srt_timestamp
+from hyperedit.srt import parse_srt, seconds_to_srt_timestamp, GetPrimitiveSrtListHash
 from hyperedit.ffmpeg import get_params_for_gpu, seconds_to_ffmpeg_timestamp as stff
 from hyperedit.time import seconds_to_output_timestamp, seconds_to_time_remaining
 from hyperedit.concatenate import create_file_list, concatenate_clips
@@ -102,7 +102,8 @@ def _run_ffmpeg_commands(commands, srt_ids):
     return durations
 
 def split_video(
-        srt_file_path=None, 
+        srt_file_path=None,
+        srts=None,
         video_file_path=None,
         preview=False,
         overwrite=False,
@@ -112,8 +113,13 @@ def split_video(
         ):
     
     if srt_file_path is None:
-        raise Exception("SRT file path is required")
-    
+        if srts:
+            time_ranges = srts
+        else:
+            raise Exception("One of arguments srt_file_path or srts are required")
+    else:
+        time_ranges = parse_srt(srt_file_path)
+
     if video_file_path is None:
         raise Exception("Video file path is required")
     
@@ -135,13 +141,14 @@ def split_video(
     # TODO use args to generate this instead of just using a timestamp
     list_filename = f'file_list_{int(time.time())}.txt'
 
-    # Parse SRT
-    if range:
+    # TODO ignore if srts provided
+    if srts:
+        final_output = f"{output_prefix}_final_{GetPrimitiveSrtListHash(srts)}.mp4"
+    elif range:
         final_output = f"{output_prefix}_final_{range[0]}-{range[1]}.mp4"
         time_ranges = parse_srt(srt_file_path)[(range[0]-1):(range[1]-1)]
     else:
         final_output = f"{output_prefix}_final.mp4"
-        time_ranges = parse_srt(srt_file_path)
 
     # generate ffmpeg commands 
     # TODO separate output_files and srt_ids generation so concat can go in its own file
