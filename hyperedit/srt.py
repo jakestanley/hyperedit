@@ -33,8 +33,8 @@ def PreviewSrt(video_path, srt, start_offset=0, end_offset=0, player=None):
     elif player == 'mpv':
         command = [
             'mpv',
-            '--start', f'{start}',
-            '--length', f'{duration}',
+            f'--start={start}',
+            f'--length={duration}',
             video_path
         ]
     else:
