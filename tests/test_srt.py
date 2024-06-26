@@ -1,7 +1,7 @@
 import unittest
 
 from parameterized import parameterized
-from hyperedit.srt import seconds_to_srt_timestamp, deaggress_ranges_by_seconds
+from hyperedit.srt import seconds_to_srt_timestamp, deaggress_ranges_by_seconds, GetPrimitiveSrtListHash
 
 class TestSrt(unittest.TestCase):
 
@@ -29,6 +29,42 @@ class TestSrt(unittest.TestCase):
         # assert start and end times (floats)
         self.assertAlmostEqual(actual[0][1], expected[0][1])
         self.assertAlmostEqual(actual[0][2], expected[0][2])
+
+    @parameterized.expand([
+        [
+            [], "00000000",
+        ],
+        [
+            [('1', 1.23, 4.56)], "98d6ce48"
+        ]
+    ])
+    def test_GetPrimitiveSrtHash(self, input, expected):
+        actual = GetPrimitiveSrtListHash(input)
+        self.assertEqual(actual, expected)
+
+    @parameterized.expand([
+        [
+            [('1', 1.23, 4.56)], [('1', 2.34, 5.67)]
+        ]
+    ])
+    def test_GetPrimitiveSrtHashDoesNotReturnSameHashForDifferentTimes(self, input1, input2):
+        actual1 = GetPrimitiveSrtListHash(input1)
+        actual2 = GetPrimitiveSrtListHash(input2)
+        self.assertNotEqual(actual1, actual2)
+
+    @parameterized.expand([
+        [
+            [('1', 1.230003, 4.56777), ('1', 1.23232232, 4.5601)]
+        ], [
+            [('1', 1.209, 4.09), ('1', 1.201, 4.0901)]
+        ]
+    ])
+    def test_GetPrimitiveSrtHashReturnsSameHashForIgnoredFloatPrecision(self, inputs):
+        hashes = set()
+        for input in inputs:
+            hashes.add(GetPrimitiveSrtListHash([input]))
+        
+        self.assertEqual(len(hashes), 1)
 
 if __name__ == '__main__':
     unittest.main()

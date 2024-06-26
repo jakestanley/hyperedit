@@ -4,6 +4,7 @@ import time
 import shutil
 import subprocess
 import hashlib
+import math
 
 from hyperedit.time import seconds_to_hmsm
 
@@ -50,17 +51,24 @@ def GetPrimitiveSrtListHash(srts):
     # TODO proper handling for if srts empty
     if len(srts) == 0:
         return "00000000"
-
-    byte_array = bytearray()
+    
     for srt in srts:
-        byte_array.extend(int(srt[0]).to_bytes(4, byteorder='big', signed=True))
 
-        # Create a new hash object (default is sha256, but you can use others like 'sha512', 'sha1', etc.)
-        hasher = getattr(hashlib, 'sha256')()
-        hasher.update(byte_array)
+        formatted_data = [
+            srt[0],  # assuming the first element is the integer as string
+            f"{math.floor(srt[1] * 100) / 100:.2f}",
+            f"{math.floor(srt[2] * 100) / 100:.2f}"
+        ]
 
-    # TODO add a extra numbers for length and a few other properties so we don't generate colliding hashes for lists of same size
-    #hasher.update
+        # Concatenate the data into one string
+        concatenated_data = ''.join(formatted_data)
+    
+        # Encode this string to bytes
+        byte_data = concatenated_data.encode('utf-8')
+    
+        # Compute the hash (using SHA-256 here, but you can choose another)
+        hasher = hashlib.sha256()
+        hasher.update(byte_data)
     
     # Return the hexadecimal (base16) representation of the digest
     return hasher.hexdigest()[:8]
