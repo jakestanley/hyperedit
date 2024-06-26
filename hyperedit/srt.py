@@ -7,7 +7,10 @@ import hashlib
 
 from hyperedit.time import seconds_to_hmsm
 
-def PreviewSrt(video_path, srt, start_offset=0, end_offset=0, player='vlc'):
+def PreviewSrt(video_path, srt, start_offset=0, end_offset=0, player=None):
+
+    if player is None:
+        raise Exception("No player specified. mpv is preferred for accuracy")
 
     start = srt[1] - start_offset
     end = srt[2] + end_offset
@@ -25,6 +28,13 @@ def PreviewSrt(video_path, srt, start_offset=0, end_offset=0, player='vlc'):
             'mplayer',
             '-ss', f'{start}',
             '-endpos', f'{duration}',
+            video_path
+        ]
+    elif player == 'mpv':
+        command = [
+            'mpv',
+            '--start', f'{start}',
+            '--length', f'{duration}',
             video_path
         ]
     else:
