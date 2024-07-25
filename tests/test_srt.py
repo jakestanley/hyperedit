@@ -1,7 +1,7 @@
 import unittest
 
 from parameterized import parameterized
-from hyperedit.srt import seconds_to_srt_timestamp, deaggress_ranges_by_seconds, GetPrimitiveSrtListHash
+from hyperedit.srt import seconds_to_srt_timestamp, deaggress_ranges_by_seconds, GetPrimitiveSrtListHash, merge
 
 class TestSrt(unittest.TestCase):
 
@@ -65,6 +65,18 @@ class TestSrt(unittest.TestCase):
             hashes.add(GetPrimitiveSrtListHash([input]))
         
         self.assertEqual(len(hashes), 1)
+
+    @parameterized.expand([
+        [
+            [('1', 1.23, 4.56, 'text1'), ('2', 2.34, 5.67, 'text2')], 'text1; text2'
+        ],
+        [
+            [('1', 1.23, 4.56, 'text1'), ('2', 2.34, 5.67, 'text2'), ('3', 4.23, 10.56, 'text3'), ('4', 9.34, 20.67, 'text4')], 'text1; text2; text3; text4'
+        ]
+    ])
+    def test_MergeMergesText(self, srts, expected_text):
+        actual = merge(srts)
+        self.assertEqual(actual[0][3], expected_text)
 
 if __name__ == '__main__':
     unittest.main()

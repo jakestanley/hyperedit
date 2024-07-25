@@ -96,16 +96,16 @@ def remove_srt_entry(srt_entries, srt_id):
 def merge(time_ranges):
     """Merge overlapping subtitles."""
     merged_time_ranges = []
-    for srt_id, start_time, end_time, text in time_ranges:
+    for srt_id, start_time, end_time, srt_text in time_ranges:
         merged = False
         for i, (merged_srt_id, merged_start_time, merged_end_time, text) in enumerate(merged_time_ranges):
             if start_time <= merged_end_time:
                 # TODO merge text, it may be useful
-                merged_time_ranges[i] = (merged_srt_id, min(start_time, merged_start_time), max(end_time, merged_end_time), text)
+                merged_time_ranges[i] = (merged_srt_id, min(start_time, merged_start_time), max(end_time, merged_end_time), f"{merged_time_ranges[i][3]}; {srt_text}")
                 merged = True
                 break
         if not merged:
-            merged_time_ranges.append((srt_id, start_time, end_time, text))
+            merged_time_ranges.append((srt_id, start_time, end_time, srt_text))
     return merged_time_ranges
 
 def _format_entry(entry):
